@@ -13,6 +13,8 @@ issues:
         - varnamelen
         - goconst
         - funlen
+        - forcetypeassert
+        - lll
 severity:
   default-severity: error
 linters:

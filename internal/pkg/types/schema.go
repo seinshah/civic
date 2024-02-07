@@ -17,7 +17,7 @@ type Schema struct {
 	// Bio contains all the personal information of the person.
 	Bio struct {
 		// Name is the full name of the person.
-		Name string `validate:"required,alphaunicode,min=2,max=100" yaml:"name"`
+		Name string `validate:"required,min=2,max=100" yaml:"name"`
 
 		// Title is the career title of the person.
 		Title string `validate:"required,min=2" yaml:"title"`
@@ -54,125 +54,155 @@ type Schema struct {
 	} `yaml:"bio" validate:"required"`
 
 	// WorkExperiences contains all the work experiences of the person.
-	WorkExperiences []struct {
-		// Title is the title of the job.
-		Title string `validate:"required" yaml:"title"`
+	WorkExperiences struct {
+		// Header is the printed header/title of this section.
+		Header string `default:"Work Experiences" yaml:"header"`
 
-		// Company is the name of the company.
-		Company string `validate:"required" yaml:"company"`
+		Entities []struct {
+			// Title is the title of the job.
+			Title string `validate:"required" yaml:"title"`
 
-		// Location is the location of the job.
-		Location string `yaml:"location"`
+			// Company is the name of the company.
+			Company string `validate:"required" yaml:"company"`
 
-		// StartDate is the start date of the job. There is no validation for the date format.
-		StartDate string `validate:"required" yaml:"startDate"`
+			// Location is the location of the job.
+			Location string `yaml:"location"`
 
-		// EndDate is the end date of the job. There is no validation for the date format.
-		EndDate string `default:"present" yaml:"endDate"`
+			// StartDate is the start date of the job. There is no validation for the date format.
+			StartDate string `validate:"required" yaml:"startDate"`
 
-		// Details is the list of details about the job. There is no validation.
-		// It can include the list of achievements, responsibilities, and any other details.
-		Details []string `validate:"dive,min=2" yaml:"details"`
+			// EndDate is the end date of the job. There is no validation for the date format.
+			EndDate string `default:"present" yaml:"endDate"`
 
-		// Technologies are the list of tools and technologies that you were exposed to during the job.
-		Technologies []string `validate:"dive,min=1" yaml:"technologies"`
+			// Details is the list of details about the job. There is no validation.
+			// It can include the list of achievements, responsibilities, and any other details.
+			Details []string `validate:"dive,min=2" yaml:"details"`
+
+			// Technologies are the list of tools and technologies that you were exposed to during the job.
+			Technologies []string `validate:"dive,min=1" yaml:"technologies"`
+		} `yaml:"entities"`
 	} `yaml:"workExperiences"`
 
 	// Educations contains all the educations of the person.
-	Educations []struct {
-		// Degree is the degree that you have achieved.
-		Degree string `validate:"required" yaml:"degree"`
+	Educations struct {
+		// Header is the printed header/title of this section.
+		Header string `default:"Educations" yaml:"header"`
 
-		// Field is the field of study.
-		Field string `validate:"required" yaml:"field"`
+		Entities []struct {
+			// Degree is the degree that you have achieved.
+			Degree string `validate:"required" yaml:"degree"`
 
-		// University is the name of the university or place of study.
-		University string `validate:"required" yaml:"university"`
+			// Field is the field of study.
+			Field string `validate:"required" yaml:"field"`
 
-		// Location is the location of the university or place of study.
-		Location string `yaml:"location"`
+			// University is the name of the university or place of study.
+			University string `validate:"required" yaml:"university"`
 
-		// StartDate is the start date of the study. There is no validation for the date format.
-		StartDate string `validate:"required" yaml:"startDate"`
+			// Location is the location of the university or place of study.
+			Location string `yaml:"location"`
 
-		// EndDate is the end date of the study. There is no validation for the date format.
-		EndDate string `default:"present" yaml:"endDate"`
+			// StartDate is the start date of the study. There is no validation for the date format.
+			StartDate string `validate:"required" yaml:"startDate"`
 
-		// Details is the list of details about the study. There is no validation.
-		// It can include the list of achievements, responsibilities, and any other details.
-		Details []string `validate:"dive,min=2" yaml:"details"`
+			// EndDate is the end date of the study. There is no validation for the date format.
+			EndDate string `default:"present" yaml:"endDate"`
 
-		// Technologies are the list of tools and technologies that you were exposed to during the study.
-		Technologies []string `validate:"dive,min=1" yaml:"technologies"`
+			// Details is the list of details about the study. There is no validation.
+			// It can include the list of achievements, responsibilities, and any other details.
+			Details []string `validate:"dive,min=2" yaml:"details"`
+
+			// Technologies are the list of tools and technologies that you were exposed to during the study.
+			Technologies []string `validate:"dive,min=1" yaml:"technologies"`
+		} `yaml:"entities"`
 	} `yaml:"educations"`
 
 	// Certificates contains all the certificates of the person.
-	Certificates []struct {
-		// Title is the title of the certificate.
-		Title string `validate:"required" yaml:"title"`
+	Certificates struct {
+		// Header is the printed header/title of this section.
+		Header string `default:"Certificates" yaml:"header"`
 
-		// Issuer is the name of the issuer of the certificate.
-		Issuer string `validate:"required" yaml:"issuer"`
+		Entities []struct {
+			// Title is the title of the certificate.
+			Title string `validate:"required" yaml:"title"`
 
-		// IssueDate is the date when the certificate was issued. There is no validation for the date format.
-		IssueDate string `validate:"required" yaml:"issueDate"`
+			// Issuer is the name of the issuer of the certificate.
+			Issuer string `validate:"required" yaml:"issuer"`
 
-		// ExpiryDate is the date when the certificate will expire. There is no validation for the date format.
-		ExpirationDate string `yaml:"expirationDate"`
+			// IssueDate is the date when the certificate was issued. There is no validation for the date format.
+			IssueDate string `validate:"required" yaml:"issueDate"`
+
+			// ExpiryDate is the date when the certificate will expire. There is no validation for the date format.
+			ExpirationDate string `yaml:"expirationDate"`
+		} `yaml:"entities"`
 	} `yaml:"certificates"`
 
 	// Publications contains all the publications of the person.
-	Publications []struct {
-		// Title is the title of the publication.
-		Title string `validate:"required" yaml:"title"`
+	Publications struct {
+		// Header is the printed header/title of this section.
+		Header string `default:"Publications" yaml:"header"`
 
-		// Publisher is the name of the publisher of the publication.
-		Publisher string `validate:"required" yaml:"publisher"`
+		Entities []struct {
+			// Title is the title of the publication.
+			Title string `validate:"required" yaml:"title"`
 
-		// PublishDate is the date when the publication was published. There is no validation for the date format.
-		PublishDate string `validate:"required" yaml:"publishDate"`
+			// Publisher is the name of the publisher of the publication.
+			Publisher string `validate:"required" yaml:"publisher"`
 
-		// Link is the link to the publication.
-		Link string `validate:"required,url" yaml:"link"`
+			// PublishDate is the date when the publication was published. There is no validation for the date format.
+			PublishDate string `validate:"required" yaml:"publishDate"`
 
-		// Details is the list of details about the publication. There is no validation.
-		Details []string `validate:"dive,min=2" yaml:"details"`
+			// Link is the link to the publication.
+			Link string `validate:"required,url" yaml:"link"`
+
+			// Details is the list of details about the publication. There is no validation.
+			Details []string `validate:"dive,min=2" yaml:"details"`
+		} `yaml:"entities"`
 	} `yaml:"publications"`
 
 	// Skills contains all the skills of the person separated by category.
-	Skills []struct {
-		// Category is the category of the skill.
-		Category string `validate:"required" yaml:"category"`
+	Skills struct {
+		// Header is the printed header/title of this section.
+		Header string `default:"Skills" yaml:"header"`
 
-		// Items contain all the tools and technologies in this category that you have experience with.
-		Items []struct {
-			// Name is the name of the skill.
-			Name string `validate:"required" yaml:"name"`
+		Entities []struct {
+			// Category is the category of the skill.
+			Category string `validate:"required" yaml:"category"`
 
-			// Description is any arbitrary detail of this skill. This might be interpreted
-			// in certain way by each template.
-			Description string `yaml:"description"`
-		}
+			// Items contain all the tools and technologies in this category that you have experience with.
+			Items []struct {
+				// Name is the name of the skill.
+				Name string `validate:"required" yaml:"name"`
+
+				// Description is any arbitrary detail of this skill. This might be interpreted
+				// in certain way by each template.
+				Description string `yaml:"description"`
+			}
+		} `yaml:"entities"`
 	} `yaml:"skills"`
 
 	// Projects contains all the projects of the person.
-	Projects []struct {
-		// Title is the title of the project.
-		Title string `validate:"required" yaml:"title"`
+	Projects struct {
+		// Header is the printed header/title of this section.
+		Header string `default:"Projects" yaml:"header"`
 
-		// Link is the link to the project.
-		Link string `validate:"required,url" yaml:"link"`
+		Entities []struct {
+			// Title is the title of the project.
+			Title string `validate:"required" yaml:"title"`
 
-		// Details is the list of details about the project. There is no validation.
-		Details []string `validate:"dive,min=2" yaml:"details"`
-	}
+			// Link is the link to the project.
+			Link string `validate:"required,url" yaml:"link"`
+
+			// Details is the list of details about the project. There is no validation.
+			Details []string `validate:"dive,min=2" yaml:"details"`
+		} `yaml:"entities"`
+	} `yaml:"projects"`
 
 	// CustomSections contains all the custom sections that you want to add to the resume or cv.
 	CustomSections []struct {
-		// Title is the title of the custom section.
-		Title string `validate:"required" yaml:"title"`
+		// Header is the title of the custom section.
+		Header string `validate:"required" yaml:"header"`
 
 		// A list of arbitrary details to be shown under this section.
 		Details []string `validate:"dive,min=2" yaml:"details"`
-	}
+	} `yaml:"customSections"`
 }
