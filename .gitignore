@@ -14,7 +14,9 @@
 # Go workspace file
 go.work
 
+# Binary files
 main
+cmd/main
 
 ########################
 # Ignore VSCode settings

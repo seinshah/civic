@@ -1,4 +1,4 @@
-package configuration
+package cvhandler
 
 import (
 	"context"
@@ -7,18 +7,18 @@ import (
 
 	"github.com/creasty/defaults"
 	"github.com/go-playground/validator/v10"
-	"github.com/seinshah/cvci/internal/loader"
-	"github.com/seinshah/cvci/internal/types"
+	"github.com/seinshah/cvci/internal/pkg/loader"
+	"github.com/seinshah/cvci/internal/pkg/types"
 	"gopkg.in/yaml.v3"
 )
 
-type Config struct {
+type ConfigurationConfig struct {
 	// Loader is the loader that is ready to load the configuration.
 	Loader loader.Loader `validate:"required"`
 }
 
-type Engine struct {
-	config  Config
+type Configuration struct {
+	config  ConfigurationConfig
 	content []byte
 	data    *types.Schema
 }
@@ -28,7 +28,7 @@ var (
 	ErrInvalidConfigurationFormat = errors.New("configuration format does not match the schema")
 )
 
-func NewEngine(ctx context.Context, config Config) (*Engine, error) {
+func NewConfiguration(ctx context.Context, config ConfigurationConfig) (*Configuration, error) {
 	validate := validator.New(validator.WithRequiredStructEnabled())
 	if err := validate.Struct(config); err != nil {
 		return nil, fmt.Errorf("invalid initialization of configuration engine: %w", err)
@@ -49,22 +49,22 @@ func NewEngine(ctx context.Context, config Config) (*Engine, error) {
 		return nil, errors.Join(ErrInvalidContent, err)
 	}
 
-	return &Engine{
+	return &Configuration{
 		config:  config,
 		content: content,
 		data:    data,
 	}, nil
 }
 
-func (e *Engine) Validate() error {
+func (c *Configuration) Validate() error {
 	validate := validator.New(validator.WithRequiredStructEnabled())
-	if err := validate.Struct(e.data); err != nil {
+	if err := validate.Struct(c.data); err != nil {
 		return errors.Join(ErrInvalidConfigurationFormat, err)
 	}
 
 	return nil
 }
 
-func (e *Engine) SchemaData() *types.Schema {
-	return e.data
+func (c *Configuration) SchemaData() *types.Schema {
+	return c.data
 }

@@ -1,4 +1,4 @@
-package template
+package cvhandler
 
 import (
 	"bytes"
@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/seinshah/cvci/internal/loader"
+	"github.com/seinshah/cvci/internal/pkg/loader"
 	"github.com/seinshah/flattenhtml"
 )
 

@@ -5,7 +5,7 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/seinshah/cvci/internal/cmd"
+	"github.com/seinshah/cvci/internal/command"
 )
 
 // Version will be changed at build time using ldflags.
@@ -26,9 +26,9 @@ func main() {
 		),
 	)
 
-	command := cmd.NewCommand(Version)
+	cmd := command.NewCommand(Version)
 
-	if err := command.Execute(); err != nil {
+	if err := cmd.Execute(); err != nil {
 		slog.Error(fmt.Sprintf("failed to proceed: %s", err))
 		os.Exit(1)
 	}

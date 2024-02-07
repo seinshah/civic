@@ -1,10 +1,10 @@
-package cmd
+package command
 
 import (
 	"log/slog"
 	"os"
 
-	"github.com/seinshah/cvci/internal/generator"
+	"github.com/seinshah/cvci/internal/cvhandler"
 	"github.com/spf13/cobra"
 )
 
@@ -65,7 +65,7 @@ func (c *Command) getGeneratorCommand() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			c.updateLogLevel()
 
-			cv := generator.NewCV("")
+			cv := cvhandler.NewGenerator("")
 
 			return cv.Generate()
 		},
