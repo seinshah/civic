@@ -63,6 +63,24 @@ func (m *MultiCursor) SelectCursor(flattener Flattener) (*Cursor, error) {
 	return &Cursor{flattener: newFlattener}, nil
 }
 
+// RegisterNewNode is used to add a newly and manually added nodes by the user to the cycle.
+// It calls flatten method of all it's flatteners by giving the Node's underlying html.Node.
+// New node can only be accessed by the NodeIterator and Cursor, if it is added to the cycle
+// using this method.
+func (m *MultiCursor) RegisterNewNode(node *Node) error {
+	if len(m.flatteners) == 0 {
+		return ErrNoFlattener
+	}
+
+	for _, f := range m.flatteners {
+		if err := f.Flatten(node.htmlNode); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 // SelectNodes returns a new NodeIterator that can iterates over the nodes that are selected
 // by the given key and perform different operations.
 // If the given key is not found in the flattened document, nodeIterator will have a zero length.
@@ -79,4 +97,12 @@ func (c *Cursor) SelectNodes(key string) *NodeIterator {
 // Len returns the final number of categories or keys that were created by the flattener.
 func (c *Cursor) Len() int {
 	return c.flattener.Len()
+}
+
+// RegisterNewNode is used to add a newly and manually added nodes by the user to the cycle.
+// It calls flatten method of the cursor's flatteners by giving the Node's underlying html.Node.
+// New node can only be accessed by the NodeIterator and Cursor, if it is added to the cycle
+// using this method.
+func (c *Cursor) RegisterNewNode(node *Node) error {
+	return c.flattener.Flatten(node.HTMLNode())
 }

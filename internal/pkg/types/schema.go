@@ -1,9 +1,13 @@
 package types
 
+type Customizer struct {
+	// Style is a block of css code that will be added in a style tag
+	// at the end of the HEAD section of the template.
+	Style string `yaml:"style"`
+}
+
 // Schema is the architecture of the configuration file that will be provided
 // by the user to be used for generating the final resume or cv.
-//
-//nolint:musttag
 type Schema struct {
 	// Template contains all the information related to the template file
 	// that will be used to create the resume or cv.
@@ -12,6 +16,9 @@ type Schema struct {
 		// on the host, or a HTTP link to where the template is located.
 		// If you provide a remote path, the link should refer to the raw HTML file.
 		Path string `validate:"required" yaml:"path"`
+
+		// Customizer is a way for you to customize the template in use.
+		Customizer Customizer `yaml:"customizer"`
 	} `validate:"required" yaml:"template"`
 
 	// Bio contains all the personal information of the person.

@@ -8,12 +8,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// CommandExecutor is an interface that should be implemented by the command manager.
-// The user of this interface only deals with the Execute method.
-type CommandExecutor interface {
-	Execute() error
-}
-
 // Command is the default command manager for this project.
 // It is responsible to register all the necessary command and sub-commands.
 type Command struct {
@@ -21,8 +15,6 @@ type Command struct {
 	verbose bool
 	debug   bool
 }
-
-var _ CommandExecutor = (*Command)(nil)
 
 // NewCommand creates a new instance of the command manager.
 // It is responsible to register all the necessary command and sub-commands.
@@ -62,7 +54,7 @@ func (c *Command) getGeneratorCommand() *cobra.Command {
 		Use:   "generate",
 		Short: "Generate the resume or cv",
 		Long:  `Generate the resume or cv based on the configuration file and the provided version.`,
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(_ *cobra.Command, _ []string) error {
 			c.updateLogLevel()
 
 			cv := cvhandler.NewGenerator("")

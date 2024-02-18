@@ -5,10 +5,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"html/template"
+	"log/slog"
 	"strings"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/seinshah/cvci/internal/pkg/loader"
+	"github.com/seinshah/cvci/internal/pkg/types"
 	"github.com/seinshah/flattenhtml"
 )
 
@@ -24,12 +27,17 @@ type Config struct {
 
 	// Loader is the loader that is ready to load the HTML template.
 	Loader loader.Loader `validate:"required"`
+
+	// Customizer is the manual customization that will be added to
+	// the template.
+	Customizer types.Customizer
 }
 
 type Engine struct {
-	content []byte
-	cursor  *flattenhtml.Cursor
-	config  Config
+	content     []byte
+	cursor      *flattenhtml.Cursor
+	nodeManager *flattenhtml.NodeManager
+	config      Config
 }
 
 var (
@@ -67,9 +75,10 @@ func NewEngine(ctx context.Context, config Config) (*Engine, error) {
 	}
 
 	return &Engine{
-		content: content,
-		cursor:  cursor,
-		config:  config,
+		content:     content,
+		cursor:      cursor,
+		nodeManager: nodeManager,
+		config:      config,
 	}, nil
 }
 
@@ -85,10 +94,55 @@ func (e *Engine) Validate() error {
 		}
 	}
 
-	return nil
+	return e.processModifications()
 }
 
-func (e *Engine) Process() error {
+func (e *Engine) Process(config *types.Schema) ([]byte, error) {
+	tpl, err := template.New("cvci").Parse(string(e.content))
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse the template: %w", err)
+	}
+
+	var processedTempl bytes.Buffer
+
+	if err = tpl.Execute(&processedTempl, config); err != nil {
+		return nil, fmt.Errorf("failed to execute the template: %w", err)
+	}
+
+	return processedTempl.Bytes(), nil
+}
+
+func (e *Engine) processModifications() error {
+	var modified bool
+
+	if e.config.Customizer.Style != "" {
+		if node := e.cursor.SelectNodes("head").First(); node != nil {
+			styleTag := node.AppendChild(
+				flattenhtml.NodeTypeElement,
+				"style",
+				map[string]string{"type": "text/css", "data-source": "cvci_customizer"},
+			)
+
+			styleTag.AppendChild(flattenhtml.NodeTypeText, e.config.Customizer.Style, nil)
+
+			if err := e.cursor.RegisterNewNode(styleTag); err != nil {
+				slog.Warn("failed to register new node", "error", err)
+			}
+
+			modified = true
+		}
+	}
+
+	if modified {
+		var outBuffer bytes.Buffer
+
+		if err := e.nodeManager.Render(&outBuffer); err != nil {
+			return fmt.Errorf("failed to render the modified template: %w", err)
+		}
+
+		e.content = outBuffer.Bytes()
+	}
+
 	return nil
 }
 

@@ -65,6 +65,6 @@ func (c *Configuration) Validate() error {
 	return nil
 }
 
-func (c *Configuration) SchemaData() *types.Schema {
+func (c *Configuration) Data() *types.Schema {
 	return c.data
 }
