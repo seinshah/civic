@@ -2,7 +2,6 @@ run:
   modules-download-mode: readonly
   go: '1.22'
 output:
-  format: colored-line-number,github-actions
   sort-results: true
 issues:
   exclude-rules:
@@ -15,6 +14,10 @@ issues:
         - funlen
         - forcetypeassert
         - lll
+linters-settings:
+  varnamelen:
+    ignore-names:
+      - wg
 severity:
   default-severity: error
 linters:

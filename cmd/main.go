@@ -1,11 +1,13 @@
 package main
 
 import (
-	"fmt"
+	"context"
 	"log/slog"
 	"os"
+	"os/signal"
 
 	"github.com/seinshah/cvci/internal/command"
+	"github.com/seinshah/cvci/internal/pkg/logger"
 )
 
 // Version will be changed at build time using ldflags.
@@ -14,22 +16,30 @@ import (
 var Version = "development"
 
 func main() {
-	// Setting up default logger with warning level
-	slog.SetDefault(
-		slog.New(
-			slog.NewTextHandler(
-				os.Stderr,
-				&slog.HandlerOptions{
-					Level: slog.LevelWarn,
-				},
-			),
-		),
-	)
+	logger.SetUp()
 
 	cmd := command.NewCommand(Version)
 
-	if err := cmd.Execute(); err != nil {
-		slog.Error(fmt.Sprintf("failed to proceed: %s", err))
-		os.Exit(1)
+	ctx, cancel := context.WithCancel(context.Background())
+
+	signalChannel := make(chan os.Signal, 1)
+	exitChannel := make(chan int, 1)
+
+	signal.Notify(signalChannel, os.Interrupt)
+
+	go func() {
+		if err := cmd.Execute(ctx); err != nil {
+			exitChannel <- 1
+		}
+
+		exitChannel <- 0
+	}()
+
+	select {
+	case <-signalChannel:
+		slog.Warn("Received interrupt signal")
+		cancel()
+	case code := <-exitChannel:
+		os.Exit(code)
 	}
 }

@@ -31,10 +31,10 @@ var (
 func NewGeneralLoader(filePath string) (*GeneralLoader, error) {
 	var generic GeneralLoader
 
-	if isLocalPath(filePath) {
-		generic.loader = NewLocalLoader(filePath)
-	} else if isRemotePath(filePath) {
+	if isRemotePath(filePath) {
 		generic.loader = NewRemoteLoader(filePath)
+	} else if isLocalPath(filePath) {
+		generic.loader = NewLocalLoader(filePath)
 	}
 
 	if generic.loader == nil {

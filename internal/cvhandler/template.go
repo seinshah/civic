@@ -21,23 +21,23 @@ const (
 	metaAttributeTemplateLanguage  = "template-language"
 )
 
-type Config struct {
+type TemplateConfig struct {
 	// AppVersion is the current version of the application.
 	AppVersion string `validate:"required,semver"`
 
-	// Loader is the loader that is ready to load the HTML template.
-	Loader loader.Loader `validate:"required"`
+	// TemplatePath is the path to the HTML template.
+	TemplatePath string `validate:"required"`
 
 	// Customizer is the manual customization that will be added to
 	// the template.
 	Customizer types.Customizer
 }
 
-type Engine struct {
+type Template struct {
 	content     []byte
 	cursor      *flattenhtml.Cursor
 	nodeManager *flattenhtml.NodeManager
-	config      Config
+	config      TemplateConfig
 }
 
 var (
@@ -48,13 +48,18 @@ var (
 
 var forbiddenTags = []string{"script", "iframe", "link"}
 
-func NewEngine(ctx context.Context, config Config) (*Engine, error) {
+func NewTemplate(ctx context.Context, config TemplateConfig) (*Template, error) {
+	templateLoader, err := loader.NewGeneralLoader(config.TemplatePath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to load template file (%s): %w", config.TemplatePath, err)
+	}
+
 	validate := validator.New(validator.WithRequiredStructEnabled())
 	if err := validate.Struct(config); err != nil {
 		return nil, fmt.Errorf("invalid template config: %w", err)
 	}
 
-	content, err := config.Loader.Load(ctx)
+	content, err := templateLoader.Load(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +79,7 @@ func NewEngine(ctx context.Context, config Config) (*Engine, error) {
 		return nil, fmt.Errorf("no cursor: %w", ErrNonParsableTemplate)
 	}
 
-	return &Engine{
+	return &Template{
 		content:     content,
 		cursor:      cursor,
 		nodeManager: nodeManager,
@@ -82,10 +87,10 @@ func NewEngine(ctx context.Context, config Config) (*Engine, error) {
 	}, nil
 }
 
-func (e *Engine) Validate() error {
+func (t *Template) Validate() error {
 	validators := []func() error{
-		e.validateForbiddenTags,
-		e.validateAppVersion,
+		t.validateForbiddenTags,
+		t.validateAppVersion,
 	}
 
 	for _, tplValidator := range validators {
@@ -94,11 +99,11 @@ func (e *Engine) Validate() error {
 		}
 	}
 
-	return e.processModifications()
+	return t.processModifications()
 }
 
-func (e *Engine) Process(config *types.Schema) ([]byte, error) {
-	tpl, err := template.New("cvci").Parse(string(e.content))
+func (t *Template) Process(config *types.Schema) ([]byte, error) {
+	tpl, err := template.New("cvci").Parse(string(t.content))
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse the template: %w", err)
 	}
@@ -112,20 +117,20 @@ func (e *Engine) Process(config *types.Schema) ([]byte, error) {
 	return processedTempl.Bytes(), nil
 }
 
-func (e *Engine) processModifications() error {
+func (t *Template) processModifications() error {
 	var modified bool
 
-	if e.config.Customizer.Style != "" {
-		if node := e.cursor.SelectNodes("head").First(); node != nil {
+	if t.config.Customizer.Style != "" {
+		if node := t.cursor.SelectNodes("head").First(); node != nil {
 			styleTag := node.AppendChild(
 				flattenhtml.NodeTypeElement,
 				"style",
 				map[string]string{"type": "text/css", "data-source": "cvci_customizer"},
 			)
 
-			styleTag.AppendChild(flattenhtml.NodeTypeText, e.config.Customizer.Style, nil)
+			styleTag.AppendChild(flattenhtml.NodeTypeText, t.config.Customizer.Style, nil)
 
-			if err := e.cursor.RegisterNewNode(styleTag); err != nil {
+			if err := t.cursor.RegisterNewNode(styleTag); err != nil {
 				slog.Warn("failed to register new node", "error", err)
 			}
 
@@ -136,19 +141,19 @@ func (e *Engine) processModifications() error {
 	if modified {
 		var outBuffer bytes.Buffer
 
-		if err := e.nodeManager.Render(&outBuffer); err != nil {
+		if err := t.nodeManager.Render(&outBuffer); err != nil {
 			return fmt.Errorf("failed to render the modified template: %w", err)
 		}
 
-		e.content = outBuffer.Bytes()
+		t.content = outBuffer.Bytes()
 	}
 
 	return nil
 }
 
-func (e *Engine) validateForbiddenTags() error {
+func (t *Template) validateForbiddenTags() error {
 	for _, tag := range forbiddenTags {
-		if e.cursor.SelectNodes(tag).Len() > 0 {
+		if t.cursor.SelectNodes(tag).Len() > 0 {
 			return fmt.Errorf("%s: %w", tag, ErrFoundInvalidTag)
 		}
 	}
@@ -156,8 +161,8 @@ func (e *Engine) validateForbiddenTags() error {
 	return nil
 }
 
-func (e *Engine) validateAppVersion() error {
-	metaTag := e.cursor.SelectNodes("meta").
+func (t *Template) validateAppVersion() error {
+	metaTag := t.cursor.SelectNodes("meta").
 		Filter(
 			flattenhtml.WithAttributeValueAs("name", metaAttributeAppVersion),
 		).
@@ -172,7 +177,7 @@ func (e *Engine) validateAppVersion() error {
 		return fmt.Errorf("empty %s: %w", metaAttributeAppVersion, ErrMismatchAppVersion)
 	}
 
-	appMajor := strings.TrimPrefix(strings.Split(e.config.AppVersion, ".")[0], "v")
+	appMajor := strings.TrimPrefix(strings.Split(t.config.AppVersion, ".")[0], "v")
 	templateAppMajor := strings.TrimPrefix(strings.Split(tplAppVersion, ".")[0], "v")
 
 	if appMajor != templateAppMajor {

@@ -1,5 +1,7 @@
 package types
 
+import "context"
+
 type Generator interface {
-	Generate() error
+	Generate(ctx context.Context) error
 }

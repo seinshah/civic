@@ -13,8 +13,8 @@ import (
 )
 
 type ConfigurationConfig struct {
-	// Loader is the loader that is ready to load the configuration.
-	Loader loader.Loader `validate:"required"`
+	// ConfigPath is the path to the configuration file.
+	ConfigPath string `validate:"required"`
 }
 
 type Configuration struct {
@@ -29,12 +29,17 @@ var (
 )
 
 func NewConfiguration(ctx context.Context, config ConfigurationConfig) (*Configuration, error) {
+	confLoader, err := loader.NewGeneralLoader(config.ConfigPath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to load cvci config file (%s): %w", config.ConfigPath, err)
+	}
+
 	validate := validator.New(validator.WithRequiredStructEnabled())
 	if err := validate.Struct(config); err != nil {
 		return nil, fmt.Errorf("invalid initialization of configuration engine: %w", err)
 	}
 
-	content, err := config.Loader.Load(ctx)
+	content, err := confLoader.Load(ctx)
 	if err != nil {
 		return nil, err
 	}

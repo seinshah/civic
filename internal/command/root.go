@@ -1,10 +1,11 @@
 package command
 
 import (
+	"context"
 	"log/slog"
-	"os"
 
 	"github.com/seinshah/cvci/internal/cvhandler"
+	"github.com/seinshah/cvci/internal/pkg/logger"
 	"github.com/spf13/cobra"
 )
 
@@ -14,6 +15,7 @@ type Command struct {
 	root    *cobra.Command
 	verbose bool
 	debug   bool
+	noColor bool
 }
 
 // NewCommand creates a new instance of the command manager.
@@ -39,56 +41,69 @@ func NewCommand(version string) *Command {
 		&cmd.debug, "debug", false,
 		"enable the debug logs",
 	)
+	cmd.root.PersistentFlags().BoolVar(
+		&cmd.noColor, "no-color", false,
+		"disable the color in the logs output",
+	)
 
 	cmd.root.AddCommand(cmd.getGeneratorCommand())
 
 	return &cmd
 }
 
-func (c *Command) Execute() error {
-	return c.root.Execute()
+func (c *Command) Execute(ctx context.Context) error {
+	return c.root.ExecuteContext(ctx)
 }
 
 func (c *Command) getGeneratorCommand() *cobra.Command {
+	var (
+		configPath string
+		outputPath string
+	)
+
 	cmd := &cobra.Command{
 		Use:   "generate",
 		Short: "Generate the resume or cv",
 		Long:  `Generate the resume or cv based on the configuration file and the provided version.`,
-		RunE: func(_ *cobra.Command, _ []string) error {
+		RunE: func(cmd *cobra.Command, _ []string) error {
 			c.updateLogLevel()
 
-			cv := cvhandler.NewGenerator("")
+			cv, err := cvhandler.NewGenerator(cmd.Version, configPath, outputPath)
+			if err != nil {
+				return err
+			}
 
-			return cv.Generate()
+			return cv.Generate(cmd.Context())
 		},
 	}
+
+	cmd.Flags().StringVarP(
+		&configPath,
+		"config", "c", "",
+		"absolute path/link to the configuration file.",
+	)
+
+	cmd.Flags().StringVarP(
+		&outputPath,
+		"output", "o", "",
+		"path to the output pdf file.",
+	)
 
 	return cmd
 }
 
 func (c *Command) updateLogLevel() {
-	// TODO: change it in Go version 1.22 to only update the default level
+	opts := make([]logger.Option, 0)
+
 	if c.debug {
-		slog.SetDefault(
-			slog.New(
-				slog.NewTextHandler(
-					os.Stderr,
-					&slog.HandlerOptions{
-						Level: slog.LevelDebug,
-					},
-				),
-			),
-		)
+		opts = append(opts, logger.WithLevel(slog.LevelDebug))
 	} else if c.verbose {
-		slog.SetDefault(
-			slog.New(
-				slog.NewTextHandler(
-					os.Stderr,
-					&slog.HandlerOptions{
-						Level: slog.LevelInfo,
-					},
-				),
-			),
-		)
+		opts = append(opts, logger.WithLevel(slog.LevelInfo))
 	}
+
+	if c.noColor {
+		opts = append(opts, logger.WithNoColor())
+	}
+
+	logger.SetUp(opts...)
 }

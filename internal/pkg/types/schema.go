@@ -21,6 +21,18 @@ type Schema struct {
 		Customizer Customizer `yaml:"customizer"`
 	} `validate:"required" yaml:"template"`
 
+	Page struct {
+		// Size is the size of the page for the PDF.
+		// Valid values are: A4, B4, A, Arch-A, Letter.
+		// If an invalid value is provided, it will default to A4.
+		Size PageSize `default:"A4" yaml:"size"`
+
+		// Margin is the margin of the page for the PDF.
+		// Absence of margin for each side leads to 0.
+		// IMPORTANT: Dimensions are in inch.
+		Margin PageMargin `yaml:"margin"`
+	}
+
 	// Bio contains all the personal information of the person.
 	Bio struct {
 		// Name is the full name of the person.
