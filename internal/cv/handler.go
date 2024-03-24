@@ -1,4 +1,4 @@
-package cvhandler
+package cv
 
 import (
 	"context"
@@ -12,26 +12,19 @@ import (
 	"github.com/seinshah/cvci/internal/pkg/types"
 )
 
-type Generator struct {
+type Handler struct {
 	appVersion       string
 	resumeConfigPath string
 	outputPath       string
 }
 
-const (
-	defaultOutputFileName = "cvci.pdf"
-	defaultConfigFileName = ".cvci.yaml"
-)
-
-var _ types.Generator = (*Generator)(nil)
-
-func NewGenerator(
+func NewHandler(
 	appVersion string,
 	configPath string,
 	outputPath string,
-) (*Generator, error) {
+) (*Handler, error) {
 	if !strings.HasSuffix(outputPath, ".pdf") {
-		outputPath = fmt.Sprintf("%s%s%s.pdf", outputPath, string(os.PathSeparator), defaultOutputFileName)
+		outputPath = fmt.Sprintf("%s%s%s.pdf", outputPath, string(os.PathSeparator), types.DefaultOutputFileName)
 	}
 
 	if configPath == "" {
@@ -40,17 +33,17 @@ func NewGenerator(
 			return nil, fmt.Errorf("failed to get the current working directory: %w", err)
 		}
 
-		configPath = fmt.Sprintf("%s%s%s", wd, string(os.PathSeparator), defaultConfigFileName)
+		configPath = fmt.Sprintf("%s%s%s", wd, string(os.PathSeparator), types.DefaultConfigFileName)
 	}
 
-	return &Generator{
+	return &Handler{
 		resumeConfigPath: configPath,
 		appVersion:       appVersion,
 		outputPath:       outputPath,
 	}, nil
 }
 
-func (g *Generator) Generate(ctx context.Context) error {
+func (g *Handler) Generate(ctx context.Context) error {
 	confManager, err := NewConfiguration(ctx, ConfigurationConfig{
 		ConfigPath: g.resumeConfigPath,
 	})

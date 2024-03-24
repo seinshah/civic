@@ -2,18 +2,16 @@ package types
 
 //go:generate go-enum --nocase --names
 
-const defaultPageSize = PageSizeA4
-
 // PageSize is the type for defining the page size for the PDF.
 // ENUM(A4, B4, A, Arch-A, Letter).
 type PageSize string
 
 // PageMargin is the type for defining the page margin for the PDF.
 type PageMargin struct {
-	Top    float64
-	Right  float64
-	Bottom float64
-	Left   float64
+	Top    float64 `yaml:"top"`
+	Right  float64 `yaml:"right"`
+	Bottom float64 `yaml:"bottom"`
+	Left   float64 `yaml:"left"`
 }
 
 const (
@@ -43,7 +41,7 @@ func (p PageSize) GetWidthInch() float64 {
 		return pageSizeArchAWidth
 	}
 
-	return defaultPageSize.GetWidthInch()
+	return DefaultPageSize.GetWidthInch()
 }
 
 // GetHeightInch returns the height of the page in inch.
@@ -59,5 +57,5 @@ func (p PageSize) GetHeightInch() float64 {
 		return pageSizeArchAHeight
 	}
 
-	return defaultPageSize.GetHeightInch()
+	return DefaultPageSize.GetHeightInch()
 }

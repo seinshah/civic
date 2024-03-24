@@ -4,13 +4,13 @@ import (
 	"context"
 	"fmt"
 	"os"
+
+	"github.com/seinshah/cvci/internal/pkg/types"
 )
 
 type Generator interface {
 	Generate(ctx context.Context, content []byte) ([]byte, error)
 }
-
-const outputPermission = 0o600
 
 func Render(
 	ctx context.Context,
@@ -23,7 +23,7 @@ func Render(
 		return err
 	}
 
-	if err = os.WriteFile(outputPath, output, outputPermission); err != nil {
+	if err = os.WriteFile(outputPath, output, types.DefaultFilePermission); err != nil {
 		return fmt.Errorf("failed to write PDF to file: %w", err)
 	}
 

@@ -1,4 +1,4 @@
-package cvhandler
+package cv
 
 import (
 	"bytes"
