@@ -20,7 +20,7 @@ func main() {
 
 	cmd := command.NewCommand(Version)
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, ctxCanceler := context.WithCancel(context.Background())
 
 	signalChannel := make(chan os.Signal, 1)
 	exitChannel := make(chan int, 1)
@@ -28,6 +28,8 @@ func main() {
 	signal.Notify(signalChannel, os.Interrupt)
 
 	go func() {
+		slog.Debug("executing the command...")
+
 		if err := cmd.Execute(ctx); err != nil {
 			exitChannel <- 1
 		}
@@ -35,11 +37,17 @@ func main() {
 		exitChannel <- 0
 	}()
 
+	var exitCode int
+
 	select {
 	case <-signalChannel:
 		slog.Warn("Received interrupt signal")
-		cancel()
-	case code := <-exitChannel:
-		os.Exit(code)
+
+		exitCode = 1
+	case exitCode = <-exitChannel:
 	}
+
+	ctxCanceler()
+
+	os.Exit(exitCode)
 }

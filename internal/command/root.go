@@ -13,7 +13,6 @@ import (
 type Command struct {
 	root    *cobra.Command
 	verbose bool
-	debug   bool
 	noColor bool
 }
 
@@ -37,10 +36,6 @@ func NewCommand(version string) *Command {
 		"show more information during the process",
 	)
 	cmd.root.PersistentFlags().BoolVar(
-		&cmd.debug, "debug", false,
-		"enable the debug logs",
-	)
-	cmd.root.PersistentFlags().BoolVar(
 		&cmd.noColor, "no-color", false,
 		"disable the color in the logs output",
 	)
@@ -58,13 +53,7 @@ func (c *Command) Execute(ctx context.Context) error {
 }
 
 func (c *Command) updateLogLevel() {
-	opts := make([]logger.Option, 0)
-
-	if c.debug {
-		opts = append(opts, logger.WithLevel(slog.LevelDebug))
-	} else if c.verbose {
-		opts = append(opts, logger.WithLevel(slog.LevelInfo))
-	}
+	opts := []logger.Option{logger.WithLevel(slog.LevelDebug)}
 
 	if c.noColor {
 		opts = append(opts, logger.WithNoColor())

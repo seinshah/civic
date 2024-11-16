@@ -34,7 +34,7 @@ func (c *Command) getGenerateCommands() *cobra.Command {
 	cmd.Flags().StringVarP(
 		&outputPath,
 		"output", "o", "",
-		"path to the output pdf file.",
+		"path to the output file.",
 	)
 
 	return cmd

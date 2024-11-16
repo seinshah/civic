@@ -23,7 +23,7 @@ func getConfigInitCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "init",
-		Short: "Create a new CVCI configuration file.",
+		Short: "Create a new template CVCI configuration file.",
 		Long:  `Generate a new CVCI configuration file with sample values for all the sections.`,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			handler := config.NewHandler()

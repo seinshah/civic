@@ -57,7 +57,7 @@ func SetUp(opts ...Option) {
 func setTintOptions() {
 	if tintOptions == nil {
 		tintOptions = &tint.Options{
-			Level: slog.LevelWarn,
+			Level: slog.LevelInfo,
 		}
 	}
 }

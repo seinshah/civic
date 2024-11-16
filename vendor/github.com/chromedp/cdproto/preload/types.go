@@ -277,6 +277,14 @@ const (
 	PrerenderFinalStatusPrerenderingURLHasEffectiveURL                             PrerenderFinalStatus = "PrerenderingUrlHasEffectiveUrl"
 	PrerenderFinalStatusRedirectedPrerenderingURLHasEffectiveURL                   PrerenderFinalStatus = "RedirectedPrerenderingUrlHasEffectiveUrl"
 	PrerenderFinalStatusActivationURLHasEffectiveURL                               PrerenderFinalStatus = "ActivationUrlHasEffectiveUrl"
+	PrerenderFinalStatusJavaScriptInterfaceAdded                                   PrerenderFinalStatus = "JavaScriptInterfaceAdded"
+	PrerenderFinalStatusJavaScriptInterfaceRemoved                                 PrerenderFinalStatus = "JavaScriptInterfaceRemoved"
+	PrerenderFinalStatusAllPrerenderingCanceled                                    PrerenderFinalStatus = "AllPrerenderingCanceled"
+	PrerenderFinalStatusWindowClosed                                               PrerenderFinalStatus = "WindowClosed"
+	PrerenderFinalStatusSlowNetwork                                                PrerenderFinalStatus = "SlowNetwork"
+	PrerenderFinalStatusOtherPrerenderedPageActivated                              PrerenderFinalStatus = "OtherPrerenderedPageActivated"
+	PrerenderFinalStatusV8optimizerDisabled                                        PrerenderFinalStatus = "V8OptimizerDisabled"
+	PrerenderFinalStatusPrerenderFailedDuringPrefetch                              PrerenderFinalStatus = "PrerenderFailedDuringPrefetch"
 )
 
 // MarshalEasyJSON satisfies easyjson.Marshaler.
@@ -423,6 +431,22 @@ func (t *PrerenderFinalStatus) UnmarshalEasyJSON(in *jlexer.Lexer) {
 		*t = PrerenderFinalStatusRedirectedPrerenderingURLHasEffectiveURL
 	case PrerenderFinalStatusActivationURLHasEffectiveURL:
 		*t = PrerenderFinalStatusActivationURLHasEffectiveURL
+	case PrerenderFinalStatusJavaScriptInterfaceAdded:
+		*t = PrerenderFinalStatusJavaScriptInterfaceAdded
+	case PrerenderFinalStatusJavaScriptInterfaceRemoved:
+		*t = PrerenderFinalStatusJavaScriptInterfaceRemoved
+	case PrerenderFinalStatusAllPrerenderingCanceled:
+		*t = PrerenderFinalStatusAllPrerenderingCanceled
+	case PrerenderFinalStatusWindowClosed:
+		*t = PrerenderFinalStatusWindowClosed
+	case PrerenderFinalStatusSlowNetwork:
+		*t = PrerenderFinalStatusSlowNetwork
+	case PrerenderFinalStatusOtherPrerenderedPageActivated:
+		*t = PrerenderFinalStatusOtherPrerenderedPageActivated
+	case PrerenderFinalStatusV8optimizerDisabled:
+		*t = PrerenderFinalStatusV8optimizerDisabled
+	case PrerenderFinalStatusPrerenderFailedDuringPrefetch:
+		*t = PrerenderFinalStatusPrerenderFailedDuringPrefetch
 
 	default:
 		in.AddError(fmt.Errorf("unknown PrerenderFinalStatus value: %v", v))
@@ -512,7 +536,6 @@ const (
 	PrefetchStatusPrefetchFailedMIMENotSupported                              PrefetchStatus = "PrefetchFailedMIMENotSupported"
 	PrefetchStatusPrefetchFailedNetError                                      PrefetchStatus = "PrefetchFailedNetError"
 	PrefetchStatusPrefetchFailedNon2xX                                        PrefetchStatus = "PrefetchFailedNon2XX"
-	PrefetchStatusPrefetchFailedPerPageLimitExceeded                          PrefetchStatus = "PrefetchFailedPerPageLimitExceeded"
 	PrefetchStatusPrefetchEvictedAfterCandidateRemoved                        PrefetchStatus = "PrefetchEvictedAfterCandidateRemoved"
 	PrefetchStatusPrefetchEvictedForNewerPrefetch                             PrefetchStatus = "PrefetchEvictedForNewerPrefetch"
 	PrefetchStatusPrefetchHeldback                                            PrefetchStatus = "PrefetchHeldback"
@@ -565,8 +588,6 @@ func (t *PrefetchStatus) UnmarshalEasyJSON(in *jlexer.Lexer) {
 		*t = PrefetchStatusPrefetchFailedNetError
 	case PrefetchStatusPrefetchFailedNon2xX:
 		*t = PrefetchStatusPrefetchFailedNon2xX
-	case PrefetchStatusPrefetchFailedPerPageLimitExceeded:
-		*t = PrefetchStatusPrefetchFailedPerPageLimitExceeded
 	case PrefetchStatusPrefetchEvictedAfterCandidateRemoved:
 		*t = PrefetchStatusPrefetchEvictedAfterCandidateRemoved
 	case PrefetchStatusPrefetchEvictedForNewerPrefetch:

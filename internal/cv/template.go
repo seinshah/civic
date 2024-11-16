@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"html/template"
 	"log/slog"
+	"slices"
 	"strings"
 
 	"github.com/go-playground/validator/v10"
@@ -18,7 +19,6 @@ import (
 const (
 	metaAttributeAppVersion        = "app-version"
 	metaAttributeTemplateDirection = "template-direction"
-	metaAttributeTemplateLanguage  = "template-language"
 )
 
 type TemplateConfig struct {
@@ -46,7 +46,14 @@ var (
 	ErrMismatchAppVersion  = errors.New("template does not support the current app version")
 )
 
-var forbiddenTags = []string{"script", "iframe", "link"}
+var (
+	forbiddenTags      = []string{"script", "iframe", "link"}
+	forbiddenException = map[string]map[string][]string{
+		"link": {
+			"rel": []string{"rel"},
+		},
+	}
+)
 
 func NewTemplate(ctx context.Context, config TemplateConfig) (*Template, error) {
 	templateLoader, err := loader.NewGeneralLoader(config.TemplatePath)
@@ -55,7 +62,7 @@ func NewTemplate(ctx context.Context, config TemplateConfig) (*Template, error) 
 	}
 
 	validate := validator.New(validator.WithRequiredStructEnabled())
-	if err := validate.Struct(config); err != nil {
+	if err = validate.Struct(config); err != nil {
 		return nil, fmt.Errorf("invalid template config: %w", err)
 	}
 
@@ -153,7 +160,31 @@ func (t *Template) processModifications() error {
 
 func (t *Template) validateForbiddenTags() error {
 	for _, tag := range forbiddenTags {
-		if t.cursor.SelectNodes(tag).Len() > 0 {
+		tags := t.cursor.SelectNodes(tag)
+
+		exceptions, ok := forbiddenException[tag]
+
+		// TODO: Add predicates to flattenhtml for filter functionality
+		// TODO: Add error return type to (*Nodes).Each method
+		if ok {
+			var invalidTags []string
+
+			for attribute, exceptionValues := range exceptions {
+				tags.Each(func(node *flattenhtml.Node) {
+					nodeAttrVal, ok := node.Attribute(attribute)
+					if !ok || !slices.Contains(exceptionValues, nodeAttrVal) {
+						invalidTags = append(
+							invalidTags,
+							fmt.Sprintf("%s(%v)", tag, node.Attributes()),
+						)
+					}
+				})
+
+				if len(invalidTags) > 0 {
+					return fmt.Errorf("%w: %v", ErrFoundInvalidTag, invalidTags)
+				}
+			}
+		} else if tags.Len() > 0 {
 			return fmt.Errorf("%s: %w", tag, ErrFoundInvalidTag)
 		}
 	}

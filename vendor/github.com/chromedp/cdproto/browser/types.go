@@ -122,6 +122,7 @@ const (
 	PermissionTypeVideoCapturePanTiltZoom  PermissionType = "videoCapturePanTiltZoom"
 	PermissionTypeWakeLockScreen           PermissionType = "wakeLockScreen"
 	PermissionTypeWakeLockSystem           PermissionType = "wakeLockSystem"
+	PermissionTypeWebAppInstallation       PermissionType = "webAppInstallation"
 	PermissionTypeWindowManagement         PermissionType = "windowManagement"
 )
 
@@ -195,6 +196,8 @@ func (t *PermissionType) UnmarshalEasyJSON(in *jlexer.Lexer) {
 		*t = PermissionTypeWakeLockScreen
 	case PermissionTypeWakeLockSystem:
 		*t = PermissionTypeWakeLockSystem
+	case PermissionTypeWebAppInstallation:
+		*t = PermissionTypeWebAppInstallation
 	case PermissionTypeWindowManagement:
 		*t = PermissionTypeWindowManagement
 
@@ -265,6 +268,7 @@ type PermissionDescriptor struct {
 	Sysex                    bool   `json:"sysex,omitempty"`                    // For "midi" permission, may also specify sysex control.
 	UserVisibleOnly          bool   `json:"userVisibleOnly,omitempty"`          // For "push" permission, may specify userVisibleOnly. Note that userVisibleOnly = true is the only currently supported type.
 	AllowWithoutSanitization bool   `json:"allowWithoutSanitization,omitempty"` // For "clipboard" permission, may specify allowWithoutSanitization.
+	AllowWithoutGesture      bool   `json:"allowWithoutGesture,omitempty"`      // For "fullscreen" permission, must specify allowWithoutGesture:true.
 	PanTiltZoom              bool   `json:"panTiltZoom,omitempty"`              // For "camera" permission, may specify panTiltZoom.
 }
 

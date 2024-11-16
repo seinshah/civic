@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+
+<html lang="en-US">
+    <head>
+        <title>{{.Bio.Name}} | {{.Bio.Title}}</title>
+
+        <meta charset="utf-8" name="app-version" content="v0.1">
+        <meta charset="utf-8" name="template-direction" content="LTR">
+
+        @page {
+            size: {{.Page.Size}};
+            margin: {{.Page.Margin.Top}} {{.Page.Margin.Right}} {{.Page.Margin.Bottom}} {{.Page.Margin.Left}};
+        }
+
+        {{/* You can use link tags with stylesheet rel */}}
+
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+            }
+        </style>
+
+        {{/* Customizer CSS code provided by the configuration file will be added here automatically if present  */}}
+    </head>
+
+    <body>
+        <div>
+            <h1>{{.Bio.Name}}</h1>
+            <h2>{{.Bio.Title}}</h2>
+
+            {{with .Bio.Contact}}
+            <ul>
+                {{with .Location}}
+                <li>Location: {{.}}</li>
+                {{end}}
+
+                {{with .Website}}
+                <li>Website: <a href="{{.}}" target="_blank">{{.}}</a></li>
+                {{end}}
+
+                {{with .Email}}
+                <li>Email: {{.}}</li>
+                {{end}}
+
+                {{with .Phone}}
+                <li>Phone: {{.}}</li>
+                {{end}}
+
+                {{range .Social}}
+                <li>Social Media: <a href="{{.}}" target="_blank">{{.}}</a></li>
+                {{end}}
+            </ul>
+            {{end}}
+
+            {{with .Bio.About}}
+            <p>{{.}}</p>
+            {{end}}
+
+            {{range .Bio.CustomData}}
+            <p>
+                {{with .Label}}
+                <strong>{{.}}:</strong>
+                {{end}}
+                {{.Value}}
+            </p>
+            {{end}}
+        </div>
+
+        <hr />
+
+        {{with .WorkExperiences}}
+        <div>
+            <h2>{{.Header}}</h2>
+            {{range .Entities}}
+            <div>
+                <h3>{{.Title}}</h3>
+                <p>
+                    {{.Company}} |
+                    {{with .Location}}{{.}} |{{end}}
+                    {{.StartDate}} -
+                    {{.EndDate}}
+                </p>
+
+                {{if len .Details | eq 1}}
+                <p>{{index .Details 0}}</p>
+                {{else with .Details}}
+                <ul>
+                    {{range .}}
+                    <li>{{.}}</li>
+                    {{end}}
+                </ul>
+                {{end}}
+
+                {{with .Technologies}}
+                <p>
+                    <strong>Tech Stack: </strong>
+                    {{range .}}
+                    <span>{{.}}</span> -
+                    {{end}}
+                </p>
+                {{end}}
+            </div>
+            {{end}}
+        </div>
+        {{end}}
+
+        <hr />
+
+        {{with .Educations}}
+        <div>
+            <h2>{{.Header}}</h2>
+            {{range .Entities}}
+            <div>
+                <h3>{{.Degree}} | {{.Field}}</h3>
+                <p>
+                    {{.University}} |
+                    {{with .Location}}{{.}} |{{end}}
+                    {{.StartDate}} -
+                    {{.EndDate}}
+                </p>
+
+                {{if len .Details | eq 1}}
+                <p>{{index .Details 0}}</p>
+                {{else with .Details}}
+                <ul>
+                    {{range .}}
+                    <li>{{.}}</li>
+                    {{end}}
+                </ul>
+                {{end}}
+
+                {{with .Technologies}}
+                <p>
+                    <strong>Tech Stack: </strong>
+                    {{range .}}
+                    <span>{{.}}</span> -
+                    {{end}}
+                </p>
+                {{end}}
+            </div>
+            {{end}}
+        </div>
+        {{end}}
+
+        <hr />
+
+        {{with .Certificates}}
+        <div>
+            <h2>{{.Header}}</h2>
+            {{range .Entities}}
+            <div>
+                <h3>{{.Title}}</h3>
+                <p>
+                    {{.Issuer}} |
+                    {{.IssueDate}}
+                    {{with .ExpirationDate}} - {{.}} {{end}}
+                </p>
+
+                {{if len .Details | eq 1}}
+                <p>{{index .Details 0}}</p>
+                {{else with .Details}}
+                <ul>
+                    {{range .}}
+                    <li>{{.}}</li>
+                    {{end}}
+                </ul>
+                {{end}}
+
+                {{with .Technologies}}
+                <p>
+                    <strong>Tech Stack: </strong>
+                    {{range .}}
+                    <span>{{.}}</span> -
+                    {{end}}
+                </p>
+                {{end}}
+            </div>
+            {{end}}
+        </div>
+        {{end}}
+
+        <hr />
+
+        {{with .Publications}}
+        <div>
+            <h2>{{.Header}}</h2>
+            {{range .Entities}}
+            <div>
+                <h3><a href="{{.Link}}" target="_blank">{{.Title}}</a></h3>
+                <p>
+                    {{.Publisher}} |
+                    {{.PublishDate}}
+                </p>
+
+                {{if len .Details | eq 1}}
+                <p>{{index .Details 0}}</p>
+                {{else with .Details}}
+                <ul>
+                    {{range .}}
+                    <li>{{.}}</li>
+                    {{end}}
+                </ul>
+                {{end}}
+            </div>
+            {{end}}
+        </div>
+        {{end}}
+
+        <hr />
+
+        {{with .Skills}}
+        <div>
+            <h2>{{.Header}}</h2>
+            {{range .Entities}}
+            <div>
+                <h3>{{.Category}}</h3>
+
+                <ul>
+                {{range .Items}}
+                    <li>
+                        {{.Name}}
+                        {{with .Description}}- {{.}}{{end}}
+                    </li>
+                {{end}}
+                </ul>
+            </div>
+            {{end}}
+        </div>
+        {{end}}
+
+        <hr />
+
+        {{with .Projects}}
+        <div>
+            <h2>{{.Header}}</h2>
+            {{range .Entities}}
+            <div>
+                <h3><a href="{{.Link}}" target="_blank">{{.Title}}</a></h3>
+
+                {{if len .Details | eq 1}}
+                <p>{{index .Details 0}}</p>
+                {{else}}
+                <ul>
+                    {{range .Details}}
+                    <li>{{.}}</li>
+                    {{end}}
+                </ul>
+                {{end}}
+            </div>
+            {{end}}
+        </div>
+        {{end}}
+
+        {{with .CustomSections}}
+        <hr />
+
+        <div>
+            <h2>{{.Header}}</h2>
+
+            <div>
+                {{if len .Details | eq 1}}
+                <p>{{index .Details 0}}</p>
+                {{else with .Details}}
+                <ul>
+                    {{range .}}
+                    <li>{{.}}</li>
+                    {{end}}
+                </ul>
+                {{end}}
+            </div>
+        </div>
+        {{end}}
+    </body>
+</html>

@@ -140,7 +140,6 @@ const (
 	SensorTypeGyroscope           SensorType = "gyroscope"
 	SensorTypeLinearAcceleration  SensorType = "linear-acceleration"
 	SensorTypeMagnetometer        SensorType = "magnetometer"
-	SensorTypeProximity           SensorType = "proximity"
 	SensorTypeRelativeOrientation SensorType = "relative-orientation"
 )
 
@@ -172,8 +171,6 @@ func (t *SensorType) UnmarshalEasyJSON(in *jlexer.Lexer) {
 		*t = SensorTypeLinearAcceleration
 	case SensorTypeMagnetometer:
 		*t = SensorTypeMagnetometer
-	case SensorTypeProximity:
-		*t = SensorTypeProximity
 	case SensorTypeRelativeOrientation:
 		*t = SensorTypeRelativeOrientation
 
@@ -229,6 +226,106 @@ type SensorReading struct {
 	Single     *SensorReadingSingle     `json:"single,omitempty"`
 	Xyz        *SensorReadingXYZ        `json:"xyz,omitempty"`
 	Quaternion *SensorReadingQuaternion `json:"quaternion,omitempty"`
+}
+
+// PressureSource [no description].
+//
+// See: https://chromedevtools.github.io/devtools-protocol/tot/Emulation#type-PressureSource
+type PressureSource string
+
+// String returns the PressureSource as string value.
+func (t PressureSource) String() string {
+	return string(t)
+}
+
+// PressureSource values.
+const (
+	PressureSourceCPU PressureSource = "cpu"
+)
+
+// MarshalEasyJSON satisfies easyjson.Marshaler.
+func (t PressureSource) MarshalEasyJSON(out *jwriter.Writer) {
+	out.String(string(t))
+}
+
+// MarshalJSON satisfies json.Marshaler.
+func (t PressureSource) MarshalJSON() ([]byte, error) {
+	return easyjson.Marshal(t)
+}
+
+// UnmarshalEasyJSON satisfies easyjson.Unmarshaler.
+func (t *PressureSource) UnmarshalEasyJSON(in *jlexer.Lexer) {
+	v := in.String()
+	switch PressureSource(v) {
+	case PressureSourceCPU:
+		*t = PressureSourceCPU
+
+	default:
+		in.AddError(fmt.Errorf("unknown PressureSource value: %v", v))
+	}
+}
+
+// UnmarshalJSON satisfies json.Unmarshaler.
+func (t *PressureSource) UnmarshalJSON(buf []byte) error {
+	return easyjson.Unmarshal(buf, t)
+}
+
+// PressureState [no description].
+//
+// See: https://chromedevtools.github.io/devtools-protocol/tot/Emulation#type-PressureState
+type PressureState string
+
+// String returns the PressureState as string value.
+func (t PressureState) String() string {
+	return string(t)
+}
+
+// PressureState values.
+const (
+	PressureStateNominal  PressureState = "nominal"
+	PressureStateFair     PressureState = "fair"
+	PressureStateSerious  PressureState = "serious"
+	PressureStateCritical PressureState = "critical"
+)
+
+// MarshalEasyJSON satisfies easyjson.Marshaler.
+func (t PressureState) MarshalEasyJSON(out *jwriter.Writer) {
+	out.String(string(t))
+}
+
+// MarshalJSON satisfies json.Marshaler.
+func (t PressureState) MarshalJSON() ([]byte, error) {
+	return easyjson.Marshal(t)
+}
+
+// UnmarshalEasyJSON satisfies easyjson.Unmarshaler.
+func (t *PressureState) UnmarshalEasyJSON(in *jlexer.Lexer) {
+	v := in.String()
+	switch PressureState(v) {
+	case PressureStateNominal:
+		*t = PressureStateNominal
+	case PressureStateFair:
+		*t = PressureStateFair
+	case PressureStateSerious:
+		*t = PressureStateSerious
+	case PressureStateCritical:
+		*t = PressureStateCritical
+
+	default:
+		in.AddError(fmt.Errorf("unknown PressureState value: %v", v))
+	}
+}
+
+// UnmarshalJSON satisfies json.Unmarshaler.
+func (t *PressureState) UnmarshalJSON(buf []byte) error {
+	return easyjson.Unmarshal(buf, t)
+}
+
+// PressureMetadata [no description].
+//
+// See: https://chromedevtools.github.io/devtools-protocol/tot/Emulation#type-PressureMetadata
+type PressureMetadata struct {
+	Available bool `json:"available,omitempty"`
 }
 
 // DisabledImageType enum of image types that can be disabled.

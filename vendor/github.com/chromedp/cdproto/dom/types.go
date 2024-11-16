@@ -5,6 +5,7 @@ package dom
 import (
 	"fmt"
 
+	"github.com/chromedp/cdproto/cdp"
 	"github.com/mailru/easyjson"
 	"github.com/mailru/easyjson/jlexer"
 	"github.com/mailru/easyjson/jwriter"
@@ -151,6 +152,15 @@ func (t *ScrollOrientation) UnmarshalJSON(buf []byte) error {
 	return easyjson.Unmarshal(buf, t)
 }
 
+// DetachedElementInfo a structure to hold the top-level node of a detached
+// tree and an array of its retained descendants.
+//
+// See: https://chromedevtools.github.io/devtools-protocol/tot/DOM#type-DetachedElementInfo
+type DetachedElementInfo struct {
+	TreeNode        *cdp.Node    `json:"treeNode"`
+	RetainedNodeIDs []cdp.NodeID `json:"retainedNodeIds"`
+}
+
 // Quad an array of quad vertices, x immediately followed by y for each
 // point, points clock-wise.
 //
@@ -240,5 +250,47 @@ func (t *EnableIncludeWhitespace) UnmarshalEasyJSON(in *jlexer.Lexer) {
 
 // UnmarshalJSON satisfies json.Unmarshaler.
 func (t *EnableIncludeWhitespace) UnmarshalJSON(buf []byte) error {
+	return easyjson.Unmarshal(buf, t)
+}
+
+// GetElementByRelationRelation type of relation to get.
+//
+// See: https://chromedevtools.github.io/devtools-protocol/tot/DOM#method-getElementByRelation
+type GetElementByRelationRelation string
+
+// String returns the GetElementByRelationRelation as string value.
+func (t GetElementByRelationRelation) String() string {
+	return string(t)
+}
+
+// GetElementByRelationRelation values.
+const (
+	GetElementByRelationRelationPopoverTarget GetElementByRelationRelation = "PopoverTarget"
+)
+
+// MarshalEasyJSON satisfies easyjson.Marshaler.
+func (t GetElementByRelationRelation) MarshalEasyJSON(out *jwriter.Writer) {
+	out.String(string(t))
+}
+
+// MarshalJSON satisfies json.Marshaler.
+func (t GetElementByRelationRelation) MarshalJSON() ([]byte, error) {
+	return easyjson.Marshal(t)
+}
+
+// UnmarshalEasyJSON satisfies easyjson.Unmarshaler.
+func (t *GetElementByRelationRelation) UnmarshalEasyJSON(in *jlexer.Lexer) {
+	v := in.String()
+	switch GetElementByRelationRelation(v) {
+	case GetElementByRelationRelationPopoverTarget:
+		*t = GetElementByRelationRelationPopoverTarget
+
+	default:
+		in.AddError(fmt.Errorf("unknown GetElementByRelationRelation value: %v", v))
+	}
+}
+
+// UnmarshalJSON satisfies json.Unmarshaler.
+func (t *GetElementByRelationRelation) UnmarshalJSON(buf []byte) error {
 	return easyjson.Unmarshal(buf, t)
 }

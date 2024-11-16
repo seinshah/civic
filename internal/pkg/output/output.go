@@ -1,4 +1,4 @@
-package pdf
+package output
 
 import (
 	"context"
@@ -8,14 +8,10 @@ import (
 	"github.com/seinshah/cvci/internal/pkg/types"
 )
 
-type Generator interface {
-	Generate(ctx context.Context, content []byte) ([]byte, error)
-}
-
 func Render(
 	ctx context.Context,
 	content []byte,
-	engine Generator,
+	engine types.OutputGenerator,
 	outputPath string,
 ) error {
 	output, err := engine.Generate(ctx, content)

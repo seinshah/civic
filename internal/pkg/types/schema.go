@@ -31,7 +31,7 @@ type Schema struct {
 		// Absence of margin for each side leads to 0.
 		// IMPORTANT: Dimensions are in inch.
 		Margin PageMargin `yaml:"margin"`
-	}
+	} `yaml:"page"`
 
 	// Bio contains all the personal information of the person.
 	Bio struct {
@@ -70,7 +70,7 @@ type Schema struct {
 			// Value of the custom data.
 			Value string `validate:"required" yaml:"value"`
 		} `yaml:"customData"`
-	} `yaml:"bio" validate:"required"`
+	} `validate:"required" yaml:"bio"`
 
 	// WorkExperiences contains all the work experiences of the person.
 	WorkExperiences struct {
@@ -99,7 +99,7 @@ type Schema struct {
 
 			// Technologies are the list of tools and technologies that you were exposed to during the job.
 			Technologies []string `validate:"dive,min=1" yaml:"technologies"`
-		} `yaml:"entities"`
+		} `validate:"required,min=1" yaml:"entities"`
 	} `yaml:"workExperiences"`
 
 	// Educations contains all the educations of the person.
@@ -132,7 +132,7 @@ type Schema struct {
 
 			// Technologies are the list of tools and technologies that you were exposed to during the study.
 			Technologies []string `validate:"dive,min=1" yaml:"technologies"`
-		} `yaml:"entities"`
+		} `validate:"required,min=1" yaml:"entities"`
 	} `yaml:"educations"`
 
 	// Certificates contains all the certificates of the person.
@@ -152,7 +152,7 @@ type Schema struct {
 
 			// ExpiryDate is the date when the certificate will expire. There is no validation for the date format.
 			ExpirationDate string `yaml:"expirationDate"`
-		} `yaml:"entities"`
+		} `validate:"required,min=1" yaml:"entities"`
 	} `yaml:"certificates"`
 
 	// Publications contains all the publications of the person.
@@ -175,7 +175,7 @@ type Schema struct {
 
 			// Details is the list of details about the publication. There is no validation.
 			Details []string `validate:"dive,min=2" yaml:"details"`
-		} `yaml:"entities"`
+		} `validate:"required,min=1" yaml:"entities"`
 	} `yaml:"publications"`
 
 	// Skills contains all the skills of the person separated by category.
@@ -195,8 +195,8 @@ type Schema struct {
 				// Description is any arbitrary detail of this skill. This might be interpreted
 				// in certain way by each template.
 				Description string `yaml:"description"`
-			}
-		} `yaml:"entities"`
+			} `validate:"required,min=1" yaml:"items"`
+		} `validate:"required,min=1" yaml:"entities"`
 	} `yaml:"skills"`
 
 	// Projects contains all the projects of the person.
@@ -211,9 +211,9 @@ type Schema struct {
 			// Link is the link to the project.
 			Link string `validate:"required,url" yaml:"link"`
 
-			// Details is the list of details about the project. There is no validation.
-			Details []string `validate:"dive,min=2" yaml:"details"`
-		} `yaml:"entities"`
+			// Details is the list of details about the project.
+			Details []string `validate:"required,min=1" yaml:"details"`
+		} `validate:"required,min=1" yaml:"entities"`
 	} `yaml:"projects"`
 
 	// CustomSections contains all the custom sections that you want to add to the resume or cv.
@@ -222,6 +222,6 @@ type Schema struct {
 		Header string `validate:"required" yaml:"header"`
 
 		// A list of arbitrary details to be shown under this section.
-		Details []string `validate:"dive,min=2" yaml:"details"`
+		Details []string `validate:"required,min=1" yaml:"details"`
 	} `yaml:"customSections"`
 }

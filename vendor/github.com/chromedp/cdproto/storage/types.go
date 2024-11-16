@@ -301,32 +301,6 @@ func (t *InterestGroupAuctionFetchType) UnmarshalJSON(buf []byte) error {
 	return easyjson.Unmarshal(buf, t)
 }
 
-// InterestGroupAd ad advertising element inside an interest group.
-//
-// See: https://chromedevtools.github.io/devtools-protocol/tot/Storage#type-InterestGroupAd
-type InterestGroupAd struct {
-	RenderURL string `json:"renderURL"`
-	Metadata  string `json:"metadata,omitempty"`
-}
-
-// InterestGroupDetails the full details of an interest group.
-//
-// See: https://chromedevtools.github.io/devtools-protocol/tot/Storage#type-InterestGroupDetails
-type InterestGroupDetails struct {
-	OwnerOrigin               string              `json:"ownerOrigin"`
-	Name                      string              `json:"name"`
-	ExpirationTime            *cdp.TimeSinceEpoch `json:"expirationTime"`
-	JoiningOrigin             string              `json:"joiningOrigin"`
-	BiddingLogicURL           string              `json:"biddingLogicURL,omitempty"`
-	BiddingWasmHelperURL      string              `json:"biddingWasmHelperURL,omitempty"`
-	UpdateURL                 string              `json:"updateURL,omitempty"`
-	TrustedBiddingSignalsURL  string              `json:"trustedBiddingSignalsURL,omitempty"`
-	TrustedBiddingSignalsKeys []string            `json:"trustedBiddingSignalsKeys"`
-	UserBiddingSignals        string              `json:"userBiddingSignals,omitempty"`
-	Ads                       []*InterestGroupAd  `json:"ads"`
-	AdComponents              []*InterestGroupAd  `json:"adComponents"`
-}
-
 // SharedStorageAccessType enum of shared storage access types.
 //
 // See: https://chromedevtools.github.io/devtools-protocol/tot/Storage#type-SharedStorageAccessType
@@ -346,6 +320,7 @@ const (
 	SharedStorageAccessTypeDocumentAppend         SharedStorageAccessType = "documentAppend"
 	SharedStorageAccessTypeDocumentDelete         SharedStorageAccessType = "documentDelete"
 	SharedStorageAccessTypeDocumentClear          SharedStorageAccessType = "documentClear"
+	SharedStorageAccessTypeDocumentGet            SharedStorageAccessType = "documentGet"
 	SharedStorageAccessTypeWorkletSet             SharedStorageAccessType = "workletSet"
 	SharedStorageAccessTypeWorkletAppend          SharedStorageAccessType = "workletAppend"
 	SharedStorageAccessTypeWorkletDelete          SharedStorageAccessType = "workletDelete"
@@ -355,6 +330,10 @@ const (
 	SharedStorageAccessTypeWorkletEntries         SharedStorageAccessType = "workletEntries"
 	SharedStorageAccessTypeWorkletLength          SharedStorageAccessType = "workletLength"
 	SharedStorageAccessTypeWorkletRemainingBudget SharedStorageAccessType = "workletRemainingBudget"
+	SharedStorageAccessTypeHeaderSet              SharedStorageAccessType = "headerSet"
+	SharedStorageAccessTypeHeaderAppend           SharedStorageAccessType = "headerAppend"
+	SharedStorageAccessTypeHeaderDelete           SharedStorageAccessType = "headerDelete"
+	SharedStorageAccessTypeHeaderClear            SharedStorageAccessType = "headerClear"
 )
 
 // MarshalEasyJSON satisfies easyjson.Marshaler.
@@ -385,6 +364,8 @@ func (t *SharedStorageAccessType) UnmarshalEasyJSON(in *jlexer.Lexer) {
 		*t = SharedStorageAccessTypeDocumentDelete
 	case SharedStorageAccessTypeDocumentClear:
 		*t = SharedStorageAccessTypeDocumentClear
+	case SharedStorageAccessTypeDocumentGet:
+		*t = SharedStorageAccessTypeDocumentGet
 	case SharedStorageAccessTypeWorkletSet:
 		*t = SharedStorageAccessTypeWorkletSet
 	case SharedStorageAccessTypeWorkletAppend:
@@ -403,6 +384,14 @@ func (t *SharedStorageAccessType) UnmarshalEasyJSON(in *jlexer.Lexer) {
 		*t = SharedStorageAccessTypeWorkletLength
 	case SharedStorageAccessTypeWorkletRemainingBudget:
 		*t = SharedStorageAccessTypeWorkletRemainingBudget
+	case SharedStorageAccessTypeHeaderSet:
+		*t = SharedStorageAccessTypeHeaderSet
+	case SharedStorageAccessTypeHeaderAppend:
+		*t = SharedStorageAccessTypeHeaderAppend
+	case SharedStorageAccessTypeHeaderDelete:
+		*t = SharedStorageAccessTypeHeaderDelete
+	case SharedStorageAccessTypeHeaderClear:
+		*t = SharedStorageAccessTypeHeaderClear
 
 	default:
 		in.AddError(fmt.Errorf("unknown SharedStorageAccessType value: %v", v))
@@ -460,9 +449,9 @@ type SharedStorageAccessParams struct {
 	OperationName    string                          `json:"operationName,omitempty"`    // Name of the registered operation to be run. Present only for SharedStorageAccessType.documentRun and SharedStorageAccessType.documentSelectURL.
 	SerializedData   string                          `json:"serializedData,omitempty"`   // The operation's serialized data in bytes (converted to a string). Present only for SharedStorageAccessType.documentRun and SharedStorageAccessType.documentSelectURL.
 	UrlsWithMetadata []*SharedStorageURLWithMetadata `json:"urlsWithMetadata,omitempty"` // Array of candidate URLs' specs, along with any associated metadata. Present only for SharedStorageAccessType.documentSelectURL.
-	Key              string                          `json:"key,omitempty"`              // Key for a specific entry in an origin's shared storage. Present only for SharedStorageAccessType.documentSet, SharedStorageAccessType.documentAppend, SharedStorageAccessType.documentDelete, SharedStorageAccessType.workletSet, SharedStorageAccessType.workletAppend, SharedStorageAccessType.workletDelete, and SharedStorageAccessType.workletGet.
-	Value            string                          `json:"value,omitempty"`            // Value for a specific entry in an origin's shared storage. Present only for SharedStorageAccessType.documentSet, SharedStorageAccessType.documentAppend, SharedStorageAccessType.workletSet, and SharedStorageAccessType.workletAppend.
-	IgnoreIfPresent  bool                            `json:"ignoreIfPresent,omitempty"`  // Whether or not to set an entry for a key if that key is already present. Present only for SharedStorageAccessType.documentSet and SharedStorageAccessType.workletSet.
+	Key              string                          `json:"key,omitempty"`              // Key for a specific entry in an origin's shared storage. Present only for SharedStorageAccessType.documentSet, SharedStorageAccessType.documentAppend, SharedStorageAccessType.documentDelete, SharedStorageAccessType.workletSet, SharedStorageAccessType.workletAppend, SharedStorageAccessType.workletDelete, SharedStorageAccessType.workletGet, SharedStorageAccessType.headerSet, SharedStorageAccessType.headerAppend, and SharedStorageAccessType.headerDelete.
+	Value            string                          `json:"value,omitempty"`            // Value for a specific entry in an origin's shared storage. Present only for SharedStorageAccessType.documentSet, SharedStorageAccessType.documentAppend, SharedStorageAccessType.workletSet, SharedStorageAccessType.workletAppend, SharedStorageAccessType.headerSet, and SharedStorageAccessType.headerAppend.
+	IgnoreIfPresent  bool                            `json:"ignoreIfPresent,omitempty"`  // Whether or not to set an entry for a key if that key is already present. Present only for SharedStorageAccessType.documentSet, SharedStorageAccessType.workletSet, and SharedStorageAccessType.headerSet.
 }
 
 // BucketsDurability [no description].
@@ -698,24 +687,55 @@ func (t *AttributionReportingTriggerDataMatching) UnmarshalJSON(buf []byte) erro
 	return easyjson.Unmarshal(buf, t)
 }
 
+// AttributionReportingAggregatableDebugReportingData [no description].
+//
+// See: https://chromedevtools.github.io/devtools-protocol/tot/Storage#type-AttributionReportingAggregatableDebugReportingData
+type AttributionReportingAggregatableDebugReportingData struct {
+	KeyPiece UnsignedInt128asBase16 `json:"keyPiece"`
+	Value    float64                `json:"value"` // number instead of integer because not all uint32 can be represented by int
+	Types    []string               `json:"types"`
+}
+
+// AttributionReportingAggregatableDebugReportingConfig [no description].
+//
+// See: https://chromedevtools.github.io/devtools-protocol/tot/Storage#type-AttributionReportingAggregatableDebugReportingConfig
+type AttributionReportingAggregatableDebugReportingConfig struct {
+	Budget                       float64                                               `json:"budget,omitempty"` // number instead of integer because not all uint32 can be represented by int, only present for source registrations
+	KeyPiece                     UnsignedInt128asBase16                                `json:"keyPiece"`
+	DebugData                    []*AttributionReportingAggregatableDebugReportingData `json:"debugData"`
+	AggregationCoordinatorOrigin string                                                `json:"aggregationCoordinatorOrigin,omitempty"`
+}
+
+// AttributionScopesData [no description].
+//
+// See: https://chromedevtools.github.io/devtools-protocol/tot/Storage#type-AttributionScopesData
+type AttributionScopesData struct {
+	Values         []string `json:"values"`
+	Limit          float64  `json:"limit"` // number instead of integer because not all uint32 can be represented by int
+	MaxEventStates float64  `json:"maxEventStates"`
+}
+
 // AttributionReportingSourceRegistration [no description].
 //
 // See: https://chromedevtools.github.io/devtools-protocol/tot/Storage#type-AttributionReportingSourceRegistration
 type AttributionReportingSourceRegistration struct {
-	Time                     *cdp.TimeSinceEpoch                         `json:"time"`
-	Expiry                   int64                                       `json:"expiry"` // duration in seconds
-	TriggerSpecs             []*AttributionReportingTriggerSpec          `json:"triggerSpecs"`
-	AggregatableReportWindow int64                                       `json:"aggregatableReportWindow"` // duration in seconds
-	Type                     AttributionReportingSourceType              `json:"type"`
-	SourceOrigin             string                                      `json:"sourceOrigin"`
-	ReportingOrigin          string                                      `json:"reportingOrigin"`
-	DestinationSites         []string                                    `json:"destinationSites"`
-	EventID                  UnsignedInt64asBase10                       `json:"eventId"`
-	Priority                 SignedInt64asBase10                         `json:"priority"`
-	FilterData               []*AttributionReportingFilterDataEntry      `json:"filterData"`
-	AggregationKeys          []*AttributionReportingAggregationKeysEntry `json:"aggregationKeys"`
-	DebugKey                 UnsignedInt64asBase10                       `json:"debugKey,omitempty"`
-	TriggerDataMatching      AttributionReportingTriggerDataMatching     `json:"triggerDataMatching"`
+	Time                             *cdp.TimeSinceEpoch                                   `json:"time"`
+	Expiry                           int64                                                 `json:"expiry"` // duration in seconds
+	TriggerSpecs                     []*AttributionReportingTriggerSpec                    `json:"triggerSpecs"`
+	AggregatableReportWindow         int64                                                 `json:"aggregatableReportWindow"` // duration in seconds
+	Type                             AttributionReportingSourceType                        `json:"type"`
+	SourceOrigin                     string                                                `json:"sourceOrigin"`
+	ReportingOrigin                  string                                                `json:"reportingOrigin"`
+	DestinationSites                 []string                                              `json:"destinationSites"`
+	EventID                          UnsignedInt64asBase10                                 `json:"eventId"`
+	Priority                         SignedInt64asBase10                                   `json:"priority"`
+	FilterData                       []*AttributionReportingFilterDataEntry                `json:"filterData"`
+	AggregationKeys                  []*AttributionReportingAggregationKeysEntry           `json:"aggregationKeys"`
+	DebugKey                         UnsignedInt64asBase10                                 `json:"debugKey,omitempty"`
+	TriggerDataMatching              AttributionReportingTriggerDataMatching               `json:"triggerDataMatching"`
+	DestinationLimitPriority         SignedInt64asBase10                                   `json:"destinationLimitPriority"`
+	AggregatableDebugReportingConfig *AttributionReportingAggregatableDebugReportingConfig `json:"aggregatableDebugReportingConfig"`
+	ScopesData                       *AttributionScopesData                                `json:"scopesData,omitempty"`
 }
 
 // AttributionReportingSourceRegistrationResult [no description].
@@ -730,18 +750,22 @@ func (t AttributionReportingSourceRegistrationResult) String() string {
 
 // AttributionReportingSourceRegistrationResult values.
 const (
-	AttributionReportingSourceRegistrationResultSuccess                               AttributionReportingSourceRegistrationResult = "success"
-	AttributionReportingSourceRegistrationResultInternalError                         AttributionReportingSourceRegistrationResult = "internalError"
-	AttributionReportingSourceRegistrationResultInsufficientSourceCapacity            AttributionReportingSourceRegistrationResult = "insufficientSourceCapacity"
-	AttributionReportingSourceRegistrationResultInsufficientUniqueDestinationCapacity AttributionReportingSourceRegistrationResult = "insufficientUniqueDestinationCapacity"
-	AttributionReportingSourceRegistrationResultExcessiveReportingOrigins             AttributionReportingSourceRegistrationResult = "excessiveReportingOrigins"
-	AttributionReportingSourceRegistrationResultProhibitedByBrowserPolicy             AttributionReportingSourceRegistrationResult = "prohibitedByBrowserPolicy"
-	AttributionReportingSourceRegistrationResultSuccessNoised                         AttributionReportingSourceRegistrationResult = "successNoised"
-	AttributionReportingSourceRegistrationResultDestinationReportingLimitReached      AttributionReportingSourceRegistrationResult = "destinationReportingLimitReached"
-	AttributionReportingSourceRegistrationResultDestinationGlobalLimitReached         AttributionReportingSourceRegistrationResult = "destinationGlobalLimitReached"
-	AttributionReportingSourceRegistrationResultDestinationBothLimitsReached          AttributionReportingSourceRegistrationResult = "destinationBothLimitsReached"
-	AttributionReportingSourceRegistrationResultReportingOriginsPerSiteLimitReached   AttributionReportingSourceRegistrationResult = "reportingOriginsPerSiteLimitReached"
-	AttributionReportingSourceRegistrationResultExceedsMaxChannelCapacity             AttributionReportingSourceRegistrationResult = "exceedsMaxChannelCapacity"
+	AttributionReportingSourceRegistrationResultSuccess                                AttributionReportingSourceRegistrationResult = "success"
+	AttributionReportingSourceRegistrationResultInternalError                          AttributionReportingSourceRegistrationResult = "internalError"
+	AttributionReportingSourceRegistrationResultInsufficientSourceCapacity             AttributionReportingSourceRegistrationResult = "insufficientSourceCapacity"
+	AttributionReportingSourceRegistrationResultInsufficientUniqueDestinationCapacity  AttributionReportingSourceRegistrationResult = "insufficientUniqueDestinationCapacity"
+	AttributionReportingSourceRegistrationResultExcessiveReportingOrigins              AttributionReportingSourceRegistrationResult = "excessiveReportingOrigins"
+	AttributionReportingSourceRegistrationResultProhibitedByBrowserPolicy              AttributionReportingSourceRegistrationResult = "prohibitedByBrowserPolicy"
+	AttributionReportingSourceRegistrationResultSuccessNoised                          AttributionReportingSourceRegistrationResult = "successNoised"
+	AttributionReportingSourceRegistrationResultDestinationReportingLimitReached       AttributionReportingSourceRegistrationResult = "destinationReportingLimitReached"
+	AttributionReportingSourceRegistrationResultDestinationGlobalLimitReached          AttributionReportingSourceRegistrationResult = "destinationGlobalLimitReached"
+	AttributionReportingSourceRegistrationResultDestinationBothLimitsReached           AttributionReportingSourceRegistrationResult = "destinationBothLimitsReached"
+	AttributionReportingSourceRegistrationResultReportingOriginsPerSiteLimitReached    AttributionReportingSourceRegistrationResult = "reportingOriginsPerSiteLimitReached"
+	AttributionReportingSourceRegistrationResultExceedsMaxChannelCapacity              AttributionReportingSourceRegistrationResult = "exceedsMaxChannelCapacity"
+	AttributionReportingSourceRegistrationResultExceedsMaxScopesChannelCapacity        AttributionReportingSourceRegistrationResult = "exceedsMaxScopesChannelCapacity"
+	AttributionReportingSourceRegistrationResultExceedsMaxTriggerStateCardinality      AttributionReportingSourceRegistrationResult = "exceedsMaxTriggerStateCardinality"
+	AttributionReportingSourceRegistrationResultExceedsMaxEventStatesLimit             AttributionReportingSourceRegistrationResult = "exceedsMaxEventStatesLimit"
+	AttributionReportingSourceRegistrationResultDestinationPerDayReportingLimitReached AttributionReportingSourceRegistrationResult = "destinationPerDayReportingLimitReached"
 )
 
 // MarshalEasyJSON satisfies easyjson.Marshaler.
@@ -782,6 +806,14 @@ func (t *AttributionReportingSourceRegistrationResult) UnmarshalEasyJSON(in *jle
 		*t = AttributionReportingSourceRegistrationResultReportingOriginsPerSiteLimitReached
 	case AttributionReportingSourceRegistrationResultExceedsMaxChannelCapacity:
 		*t = AttributionReportingSourceRegistrationResultExceedsMaxChannelCapacity
+	case AttributionReportingSourceRegistrationResultExceedsMaxScopesChannelCapacity:
+		*t = AttributionReportingSourceRegistrationResultExceedsMaxScopesChannelCapacity
+	case AttributionReportingSourceRegistrationResultExceedsMaxTriggerStateCardinality:
+		*t = AttributionReportingSourceRegistrationResultExceedsMaxTriggerStateCardinality
+	case AttributionReportingSourceRegistrationResultExceedsMaxEventStatesLimit:
+		*t = AttributionReportingSourceRegistrationResultExceedsMaxEventStatesLimit
+	case AttributionReportingSourceRegistrationResultDestinationPerDayReportingLimitReached:
+		*t = AttributionReportingSourceRegistrationResultDestinationPerDayReportingLimitReached
 
 	default:
 		in.AddError(fmt.Errorf("unknown AttributionReportingSourceRegistrationResult value: %v", v))
@@ -842,8 +874,9 @@ func (t *AttributionReportingSourceRegistrationTimeConfig) UnmarshalJSON(buf []b
 //
 // See: https://chromedevtools.github.io/devtools-protocol/tot/Storage#type-AttributionReportingAggregatableValueDictEntry
 type AttributionReportingAggregatableValueDictEntry struct {
-	Key   string  `json:"key"`
-	Value float64 `json:"value"` // number instead of integer because not all uint32 can be represented by int
+	Key         string                `json:"key"`
+	Value       float64               `json:"value"` // number instead of integer because not all uint32 can be represented by int
+	FilteringID UnsignedInt64asBase10 `json:"filteringId"`
 }
 
 // AttributionReportingAggregatableValueEntry [no description].
@@ -885,16 +918,19 @@ type AttributionReportingAggregatableDedupKey struct {
 //
 // See: https://chromedevtools.github.io/devtools-protocol/tot/Storage#type-AttributionReportingTriggerRegistration
 type AttributionReportingTriggerRegistration struct {
-	Filters                      *AttributionReportingFilterPair                  `json:"filters"`
-	DebugKey                     UnsignedInt64asBase10                            `json:"debugKey,omitempty"`
-	AggregatableDedupKeys        []*AttributionReportingAggregatableDedupKey      `json:"aggregatableDedupKeys"`
-	EventTriggerData             []*AttributionReportingEventTriggerData          `json:"eventTriggerData"`
-	AggregatableTriggerData      []*AttributionReportingAggregatableTriggerData   `json:"aggregatableTriggerData"`
-	AggregatableValues           []*AttributionReportingAggregatableValueEntry    `json:"aggregatableValues"`
-	DebugReporting               bool                                             `json:"debugReporting"`
-	AggregationCoordinatorOrigin string                                           `json:"aggregationCoordinatorOrigin,omitempty"`
-	SourceRegistrationTimeConfig AttributionReportingSourceRegistrationTimeConfig `json:"sourceRegistrationTimeConfig"`
-	TriggerContextID             string                                           `json:"triggerContextId,omitempty"`
+	Filters                          *AttributionReportingFilterPair                       `json:"filters"`
+	DebugKey                         UnsignedInt64asBase10                                 `json:"debugKey,omitempty"`
+	AggregatableDedupKeys            []*AttributionReportingAggregatableDedupKey           `json:"aggregatableDedupKeys"`
+	EventTriggerData                 []*AttributionReportingEventTriggerData               `json:"eventTriggerData"`
+	AggregatableTriggerData          []*AttributionReportingAggregatableTriggerData        `json:"aggregatableTriggerData"`
+	AggregatableValues               []*AttributionReportingAggregatableValueEntry         `json:"aggregatableValues"`
+	AggregatableFilteringIDMaxBytes  int64                                                 `json:"aggregatableFilteringIdMaxBytes"`
+	DebugReporting                   bool                                                  `json:"debugReporting"`
+	AggregationCoordinatorOrigin     string                                                `json:"aggregationCoordinatorOrigin,omitempty"`
+	SourceRegistrationTimeConfig     AttributionReportingSourceRegistrationTimeConfig      `json:"sourceRegistrationTimeConfig"`
+	TriggerContextID                 string                                                `json:"triggerContextId,omitempty"`
+	AggregatableDebugReportingConfig *AttributionReportingAggregatableDebugReportingConfig `json:"aggregatableDebugReportingConfig"`
+	Scopes                           []string                                              `json:"scopes"`
 }
 
 // AttributionReportingEventLevelResult [no description].
@@ -1072,4 +1108,13 @@ func (t *AttributionReportingAggregatableResult) UnmarshalEasyJSON(in *jlexer.Le
 // UnmarshalJSON satisfies json.Unmarshaler.
 func (t *AttributionReportingAggregatableResult) UnmarshalJSON(buf []byte) error {
 	return easyjson.Unmarshal(buf, t)
+}
+
+// RelatedWebsiteSet a single Related Website Set object.
+//
+// See: https://chromedevtools.github.io/devtools-protocol/tot/Storage#type-RelatedWebsiteSet
+type RelatedWebsiteSet struct {
+	PrimarySites    []string `json:"primarySites"`    // The primary site of this set, along with the ccTLDs if there is any.
+	AssociatedSites []string `json:"associatedSites"` // The associated sites of this set, along with the ccTLDs if there is any.
+	ServiceSites    []string `json:"serviceSites"`    // The service sites of this set, along with the ccTLDs if there is any.
 }

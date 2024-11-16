@@ -20,6 +20,8 @@ type Headless struct {
 
 type Option func(*options)
 
+var _ types.OutputGenerator = &Headless{}
+
 func WithPageSize(size types.PageSize) Option {
 	return func(o *options) {
 		o.pageSize = size
