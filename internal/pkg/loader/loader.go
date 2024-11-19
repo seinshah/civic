@@ -52,6 +52,14 @@ func (l *GeneralLoader) Load(ctx context.Context) ([]byte, error) {
 	return l.loader.Load(ctx)
 }
 
+// Loader simply return the concrete underlyin loader that GeneralLoader has detected
+// and will be using going forward.
+//
+//nolint:ireturn
+func (l *GeneralLoader) Loader() Loader {
+	return l.loader
+}
+
 func isLocalPath(path string) bool {
 	// We make sure it isn't a directory.
 	if strings.HasSuffix(path, string(os.PathSeparator)) {
