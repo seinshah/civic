@@ -18,6 +18,12 @@ linters-settings:
   varnamelen:
     ignore-names:
       - wg
+  gci:
+    sections:
+    - default
+    - standard
+    - blank
+    - dot
 severity:
   default-severity: error
 linters:

@@ -1,7 +1,6 @@
 package types_test
 
 import (
-	_ "embed"
 	"encoding/json"
 	"regexp"
 	"strconv"
@@ -13,6 +12,8 @@ import (
 	"github.com/seinshah/cvci/internal/pkg/types"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v3"
+
+	_ "embed"
 )
 
 //go:embed sample_config.yaml

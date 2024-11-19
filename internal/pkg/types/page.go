@@ -1,6 +1,10 @@
 package types
 
+import "errors"
+
 //go:generate go-enum --nocase --names
+
+var ErrInvalidPageMargin = errors.New("invalid page margin")
 
 // PageSize is the type for defining the page size for the PDF.
 // ENUM(A4, B4, A, Arch-A, Letter).
@@ -8,10 +12,10 @@ type PageSize string
 
 // PageMargin is the type for defining the page margin for the PDF.
 type PageMargin struct {
-	Top    float64 `yaml:"top"`
-	Right  float64 `yaml:"right"`
-	Bottom float64 `yaml:"bottom"`
-	Left   float64 `yaml:"left"`
+	Top    float64 `validate:"gte=0,lt=3" yaml:"top"`
+	Right  float64 `validate:"gte=0,lt=3" yaml:"right"`
+	Bottom float64 `validate:"gte=0,lt=3" yaml:"bottom"`
+	Left   float64 `validate:"gte=0,lt=3" yaml:"left"`
 }
 
 const (

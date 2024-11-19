@@ -2,10 +2,12 @@ package chrome
 
 import (
 	"context"
+	"errors"
 	"sync"
 
 	"github.com/chromedp/cdproto/page"
 	"github.com/chromedp/chromedp"
+	"github.com/go-playground/validator/v10"
 	"github.com/seinshah/cvci/internal/pkg/types"
 )
 
@@ -35,7 +37,9 @@ func WithPageMargin(margin types.PageMargin) Option {
 }
 
 func NewHeadless(opts ...Option) *Headless {
-	instanceOpts := options{}
+	instanceOpts := options{
+		pageSize: types.DefaultPageSize,
+	}
 
 	for _, opt := range opts {
 		opt(&instanceOpts)
@@ -47,6 +51,14 @@ func NewHeadless(opts ...Option) *Headless {
 }
 
 func (h *Headless) Generate(ctx context.Context, content []byte) ([]byte, error) {
+	if !h.config.pageSize.IsValid() {
+		return nil, types.ErrInvalidPageSize
+	}
+
+	if err := validator.New().Struct(h.config.pageMargin); err != nil {
+		return nil, errors.Join(types.ErrInvalidPageMargin, err)
+	}
+
 	newCtx, cancel := chromedp.NewContext(ctx)
 	defer cancel()
 
