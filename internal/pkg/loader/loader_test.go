@@ -17,7 +17,7 @@ func localFileSetUp(content string) func(t *testing.T) (string, func(t *testing.
 	return func(t *testing.T) (string, func(t *testing.T)) {
 		t.Helper()
 
-		f, err := os.CreateTemp("/tmp", "cvci-test-*.txt")
+		f, err := os.CreateTemp(os.TempDir(), "cvci-test-*.txt")
 
 		require.NoError(t, err)
 
