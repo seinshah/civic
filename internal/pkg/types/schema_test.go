@@ -16,7 +16,7 @@ import (
 	_ "embed"
 )
 
-//go:embed sample_config.yaml
+//go:embed example.schema.yaml
 var sampleSchema []byte
 
 var re = regexp.MustCompile(`\[(?P<sliceIndex>\d+)]`)
@@ -51,7 +51,7 @@ func TestSchemaDataType(t *testing.T) {
 			validate: func(value any) bool {
 				d := value.(string)
 
-				return d == "https://raw.githubusercontent.com/argoproj/argo-cd/master/manifests/install.yaml"
+				return d == "https://raw.githubusercontent.com/seinshah/cvci/main/examples/example.template.html"
 			},
 		},
 		{

@@ -1,7 +1,8 @@
-package config
+package schema
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 	"os"
@@ -10,7 +11,9 @@ import (
 	"github.com/seinshah/cvci/internal/pkg/types"
 )
 
-const sampleConfigPath = "https://raw.githubusercontent.com/seinshah/cvci/main/assets/sample_config.yaml"
+const sampleConfigPath = "https://raw.githubusercontent.com/seinshah/cvci/main/examples/example.schema.yaml"
+
+var ErrEmptyOutputPath = errors.New("output path is empty")
 
 type Handler struct{}
 
@@ -25,23 +28,23 @@ func (h *Handler) Init(
 	outputPath string,
 ) error {
 	if outputPath == "" {
-		outputPath = "./" + types.DefaultConfigFileName
+		return ErrEmptyOutputPath
 	}
 
-	slog.Debug("loading configuration template file", "path", sampleConfigPath)
+	slog.Debug("loading sample cv schema file", "path", sampleConfigPath)
 
 	conf, err := loader.NewRemoteLoader(sampleConfigPath).Load(ctx)
 	if err != nil {
-		return fmt.Errorf("failed to load sample configuration file: %w", err)
+		return fmt.Errorf("failed to load sample schema file: %w", err)
 	}
 
-	slog.Debug("loaded configuration template", "writingTo", outputPath)
+	slog.Debug("loaded sample schema file", "writingTo", outputPath)
 
 	if err = os.WriteFile(outputPath, conf, types.DefaultFilePermission); err != nil {
-		return fmt.Errorf("failed to write the configuration file: %w", err)
+		return fmt.Errorf("failed to write the schema file: %w", err)
 	}
 
-	slog.Info("Template configuration file created successfully", "path", outputPath)
+	slog.Info("Sample schema file created successfully", "path", outputPath)
 
 	return nil
 }

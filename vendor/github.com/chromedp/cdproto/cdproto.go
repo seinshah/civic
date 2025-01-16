@@ -23,7 +23,6 @@ import (
 	"github.com/chromedp/cdproto/cast"
 	"github.com/chromedp/cdproto/cdp"
 	"github.com/chromedp/cdproto/css"
-	"github.com/chromedp/cdproto/database"
 	"github.com/chromedp/cdproto/debugger"
 	"github.com/chromedp/cdproto/deviceaccess"
 	"github.com/chromedp/cdproto/deviceorientation"
@@ -155,15 +154,20 @@ const (
 	CommandCSSDisable                                       = css.CommandDisable
 	CommandCSSEnable                                        = css.CommandEnable
 	CommandCSSForcePseudoState                              = css.CommandForcePseudoState
+	CommandCSSForceStartingStyle                            = css.CommandForceStartingStyle
 	CommandCSSGetBackgroundColors                           = css.CommandGetBackgroundColors
 	CommandCSSGetComputedStyleForNode                       = css.CommandGetComputedStyleForNode
+	CommandCSSResolveValues                                 = css.CommandResolveValues
+	CommandCSSGetLonghandProperties                         = css.CommandGetLonghandProperties
 	CommandCSSGetInlineStylesForNode                        = css.CommandGetInlineStylesForNode
+	CommandCSSGetAnimatedStylesForNode                      = css.CommandGetAnimatedStylesForNode
 	CommandCSSGetMatchedStylesForNode                       = css.CommandGetMatchedStylesForNode
 	CommandCSSGetMediaQueries                               = css.CommandGetMediaQueries
 	CommandCSSGetPlatformFontsForNode                       = css.CommandGetPlatformFontsForNode
 	CommandCSSGetStyleSheetText                             = css.CommandGetStyleSheetText
 	CommandCSSGetLayersForNode                              = css.CommandGetLayersForNode
 	CommandCSSGetLocationForSelector                        = css.CommandGetLocationForSelector
+	CommandCSSTrackComputedStyleUpdatesForNode              = css.CommandTrackComputedStyleUpdatesForNode
 	CommandCSSTrackComputedStyleUpdates                     = css.CommandTrackComputedStyleUpdates
 	CommandCSSTakeComputedStyleUpdates                      = css.CommandTakeComputedStyleUpdates
 	CommandCSSSetEffectivePropertyValueForNode              = css.CommandSetEffectivePropertyValueForNode
@@ -185,6 +189,7 @@ const (
 	EventCSSStyleSheetAdded                                 = "CSS.styleSheetAdded"
 	EventCSSStyleSheetChanged                               = "CSS.styleSheetChanged"
 	EventCSSStyleSheetRemoved                               = "CSS.styleSheetRemoved"
+	EventCSSComputedStyleUpdated                            = "CSS.computedStyleUpdated"
 	CommandCacheStorageDeleteCache                          = cachestorage.CommandDeleteCache
 	CommandCacheStorageDeleteEntry                          = cachestorage.CommandDeleteEntry
 	CommandCacheStorageRequestCacheNames                    = cachestorage.CommandRequestCacheNames
@@ -283,11 +288,6 @@ const (
 	EventDOMStorageDomStorageItemRemoved                    = "DOMStorage.domStorageItemRemoved"
 	EventDOMStorageDomStorageItemUpdated                    = "DOMStorage.domStorageItemUpdated"
 	EventDOMStorageDomStorageItemsCleared                   = "DOMStorage.domStorageItemsCleared"
-	CommandDatabaseDisable                                  = database.CommandDisable
-	CommandDatabaseEnable                                   = database.CommandEnable
-	CommandDatabaseExecuteSQL                               = database.CommandExecuteSQL
-	CommandDatabaseGetDatabaseTableNames                    = database.CommandGetDatabaseTableNames
-	EventDatabaseAddDatabase                                = "Database.addDatabase"
 	CommandDebuggerContinueToLocation                       = debugger.CommandContinueToLocation
 	CommandDebuggerDisable                                  = debugger.CommandDisable
 	CommandDebuggerEnable                                   = debugger.CommandEnable
@@ -505,6 +505,7 @@ const (
 	CommandNetworkGetSecurityIsolationStatus                = network.CommandGetSecurityIsolationStatus
 	CommandNetworkEnableReportingAPI                        = network.CommandEnableReportingAPI
 	CommandNetworkLoadNetworkResource                       = network.CommandLoadNetworkResource
+	CommandNetworkSetCookieControls                         = network.CommandSetCookieControls
 	EventNetworkDataReceived                                = "Network.dataReceived"
 	EventNetworkEventSourceMessageReceived                  = "Network.eventSourceMessageReceived"
 	EventNetworkLoadingFailed                               = "Network.loadingFailed"
@@ -1082,14 +1083,26 @@ func UnmarshalMessage(msg *Message) (interface{}, error) {
 	case CommandCSSForcePseudoState:
 		return emptyVal, nil
 
+	case CommandCSSForceStartingStyle:
+		return emptyVal, nil
+
 	case CommandCSSGetBackgroundColors:
 		v = new(css.GetBackgroundColorsReturns)
 
 	case CommandCSSGetComputedStyleForNode:
 		v = new(css.GetComputedStyleForNodeReturns)
 
+	case CommandCSSResolveValues:
+		v = new(css.ResolveValuesReturns)
+
+	case CommandCSSGetLonghandProperties:
+		v = new(css.GetLonghandPropertiesReturns)
+
 	case CommandCSSGetInlineStylesForNode:
 		v = new(css.GetInlineStylesForNodeReturns)
+
+	case CommandCSSGetAnimatedStylesForNode:
+		v = new(css.GetAnimatedStylesForNodeReturns)
 
 	case CommandCSSGetMatchedStylesForNode:
 		v = new(css.GetMatchedStylesForNodeReturns)
@@ -1108,6 +1121,9 @@ func UnmarshalMessage(msg *Message) (interface{}, error) {
 
 	case CommandCSSGetLocationForSelector:
 		v = new(css.GetLocationForSelectorReturns)
+
+	case CommandCSSTrackComputedStyleUpdatesForNode:
+		return emptyVal, nil
 
 	case CommandCSSTrackComputedStyleUpdates:
 		return emptyVal, nil
@@ -1171,6 +1187,9 @@ func UnmarshalMessage(msg *Message) (interface{}, error) {
 
 	case EventCSSStyleSheetRemoved:
 		v = new(css.EventStyleSheetRemoved)
+
+	case EventCSSComputedStyleUpdated:
+		v = new(css.EventComputedStyleUpdated)
 
 	case CommandCacheStorageDeleteCache:
 		return emptyVal, nil
@@ -1465,21 +1484,6 @@ func UnmarshalMessage(msg *Message) (interface{}, error) {
 
 	case EventDOMStorageDomStorageItemsCleared:
 		v = new(domstorage.EventDomStorageItemsCleared)
-
-	case CommandDatabaseDisable:
-		return emptyVal, nil
-
-	case CommandDatabaseEnable:
-		return emptyVal, nil
-
-	case CommandDatabaseExecuteSQL:
-		v = new(database.ExecuteSQLReturns)
-
-	case CommandDatabaseGetDatabaseTableNames:
-		v = new(database.GetDatabaseTableNamesReturns)
-
-	case EventDatabaseAddDatabase:
-		v = new(database.EventAddDatabase)
 
 	case CommandDebuggerContinueToLocation:
 		return emptyVal, nil
@@ -2131,6 +2135,9 @@ func UnmarshalMessage(msg *Message) (interface{}, error) {
 
 	case CommandNetworkLoadNetworkResource:
 		v = new(network.LoadNetworkResourceReturns)
+
+	case CommandNetworkSetCookieControls:
+		return emptyVal, nil
 
 	case EventNetworkDataReceived:
 		v = new(network.EventDataReceived)

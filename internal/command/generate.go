@@ -2,21 +2,22 @@ package command
 
 import (
 	"github.com/seinshah/cvci/internal/cv"
+	"github.com/seinshah/cvci/internal/pkg/types"
 	"github.com/spf13/cobra"
 )
 
 func (c *Command) getGenerateCommands() *cobra.Command {
 	var (
-		configPath string
-		outputPath string
+		schemaFilePath string
+		outputPath     string
 	)
 
 	cmd := &cobra.Command{
 		Use:   "generate",
 		Short: "Generate the resume or cv",
-		Long:  `Generate the resume or cv based on the configuration file and the provided version.`,
+		Long:  `Generate the resume or cv based on the schema file and the provided version.`,
 		RunE: func(cmd *cobra.Command, _ []string) error {
-			handler, err := cv.NewHandler(cmd.Version, configPath, outputPath)
+			handler, err := cv.NewHandler(c.version, schemaFilePath, outputPath)
 			if err != nil {
 				return err
 			}
@@ -26,15 +27,17 @@ func (c *Command) getGenerateCommands() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(
-		&configPath,
-		"config", "c", "",
-		"absolute path/link to the configuration file.",
+		&schemaFilePath,
+		"schema_file", "s", types.CurrentWDPath(types.DefaultSchemaFileName),
+		`The local path or link to the CV schema file. This file includes the data that will be replicated in
+the template. Only YAML is supported at the moment.`,
 	)
 
 	cmd.Flags().StringVarP(
 		&outputPath,
-		"output", "o", "",
-		"path to the output file.",
+		"output", "o", types.CurrentWDPath(types.DefaultOutputFileName),
+		`Path to the output file. The output type is inferred from the file extension.
+Valid types: pdf, html.`,
 	)
 
 	return cmd

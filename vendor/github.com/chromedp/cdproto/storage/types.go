@@ -33,7 +33,6 @@ func (t Type) String() string {
 
 // Type values.
 const (
-	TypeAppcache       Type = "appcache"
 	TypeCookies        Type = "cookies"
 	TypeFileSystems    Type = "file_systems"
 	TypeIndexeddb      Type = "indexeddb"
@@ -63,8 +62,6 @@ func (t Type) MarshalJSON() ([]byte, error) {
 func (t *Type) UnmarshalEasyJSON(in *jlexer.Lexer) {
 	v := in.String()
 	switch Type(v) {
-	case TypeAppcache:
-		*t = TypeAppcache
 	case TypeCookies:
 		*t = TypeCookies
 	case TypeFileSystems:
@@ -736,6 +733,7 @@ type AttributionReportingSourceRegistration struct {
 	DestinationLimitPriority         SignedInt64asBase10                                   `json:"destinationLimitPriority"`
 	AggregatableDebugReportingConfig *AttributionReportingAggregatableDebugReportingConfig `json:"aggregatableDebugReportingConfig"`
 	ScopesData                       *AttributionScopesData                                `json:"scopesData,omitempty"`
+	MaxEventLevelReports             int64                                                 `json:"maxEventLevelReports"`
 }
 
 // AttributionReportingSourceRegistrationResult [no description].
@@ -1049,6 +1047,7 @@ const (
 	AttributionReportingAggregatableResultExcessiveReportingOrigins           AttributionReportingAggregatableResult = "excessiveReportingOrigins"
 	AttributionReportingAggregatableResultNoHistograms                        AttributionReportingAggregatableResult = "noHistograms"
 	AttributionReportingAggregatableResultInsufficientBudget                  AttributionReportingAggregatableResult = "insufficientBudget"
+	AttributionReportingAggregatableResultInsufficientNamedBudget             AttributionReportingAggregatableResult = "insufficientNamedBudget"
 	AttributionReportingAggregatableResultNoMatchingSourceFilterData          AttributionReportingAggregatableResult = "noMatchingSourceFilterData"
 	AttributionReportingAggregatableResultNotRegistered                       AttributionReportingAggregatableResult = "notRegistered"
 	AttributionReportingAggregatableResultProhibitedByBrowserPolicy           AttributionReportingAggregatableResult = "prohibitedByBrowserPolicy"
@@ -1087,6 +1086,8 @@ func (t *AttributionReportingAggregatableResult) UnmarshalEasyJSON(in *jlexer.Le
 		*t = AttributionReportingAggregatableResultNoHistograms
 	case AttributionReportingAggregatableResultInsufficientBudget:
 		*t = AttributionReportingAggregatableResultInsufficientBudget
+	case AttributionReportingAggregatableResultInsufficientNamedBudget:
+		*t = AttributionReportingAggregatableResultInsufficientNamedBudget
 	case AttributionReportingAggregatableResultNoMatchingSourceFilterData:
 		*t = AttributionReportingAggregatableResultNoMatchingSourceFilterData
 	case AttributionReportingAggregatableResultNotRegistered:

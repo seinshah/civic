@@ -1,19 +1,19 @@
-package config_test
+package schema_test
 
 import (
 	"context"
 	"os"
 	"testing"
 
-	"github.com/seinshah/cvci/internal/config"
 	"github.com/seinshah/cvci/internal/pkg/types"
+	"github.com/seinshah/cvci/internal/schema"
 	"github.com/stretchr/testify/require"
 )
 
 func TestHandler_Init(t *testing.T) {
 	t.Parallel()
 
-	h := config.NewHandler()
+	h := schema.NewHandler()
 
 	wd, _ := os.Getwd()
 
@@ -25,14 +25,17 @@ func TestHandler_Init(t *testing.T) {
 		err        error
 	}{
 		{
-			name: "success",
-		},
-		{
-			name:       "success with custom path",
+			name:       "success",
 			outputPath: os.TempDir() + "/test.yaml",
 		},
 		{
-			name: "error loading sample config",
+			name:     "empty_path",
+			hasError: true,
+			err:      schema.ErrEmptyOutputPath,
+		},
+		{
+			name:       "error loading sample schema",
+			outputPath: os.TempDir() + "/test1.yaml",
 			ctx: func() (context.Context, context.CancelFunc) {
 				return context.WithTimeout(context.Background(), 0)
 			},
@@ -68,7 +71,7 @@ func TestHandler_Init(t *testing.T) {
 
 			expectedPath := tc.outputPath
 			if expectedPath == "" {
-				expectedPath = "./" + types.DefaultConfigFileName
+				expectedPath = "./" + types.DefaultSchemaFileName
 			}
 
 			defer func() {

@@ -14,12 +14,15 @@ type Command struct {
 	root    *cobra.Command
 	verbose bool
 	noColor bool
+	version string
 }
 
 // NewCommand creates a new instance of the command manager.
 // It is responsible to register all the necessary command and sub-commands.
 func NewCommand(version string) *Command {
-	var cmd Command
+	cmd := Command{
+		version: version,
+	}
 
 	cmd.root = &cobra.Command{
 		Use:     "cvci",

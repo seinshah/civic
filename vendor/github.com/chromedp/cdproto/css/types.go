@@ -85,12 +85,30 @@ type PseudoElementMatches struct {
 	Matches          []*RuleMatch   `json:"matches"`                    // Matches of CSS rules applicable to the pseudo style.
 }
 
+// AnimationStyle CSS style coming from animations with the name of the
+// animation.
+//
+// See: https://chromedevtools.github.io/devtools-protocol/tot/CSS#type-CSSAnimationStyle
+type AnimationStyle struct {
+	Name  string `json:"name,omitempty"` // The name of the animation.
+	Style *Style `json:"style"`          // The style coming from the animation.
+}
+
 // InheritedStyleEntry inherited CSS rule collection from ancestor node.
 //
 // See: https://chromedevtools.github.io/devtools-protocol/tot/CSS#type-InheritedStyleEntry
 type InheritedStyleEntry struct {
 	InlineStyle     *Style       `json:"inlineStyle,omitempty"` // The ancestor node's inline style, if any, in the style inheritance chain.
 	MatchedCSSRules []*RuleMatch `json:"matchedCSSRules"`       // Matches of CSS rules matching the ancestor node in the style inheritance chain.
+}
+
+// InheritedAnimatedStyleEntry inherited CSS style collection for animated
+// styles from ancestor node.
+//
+// See: https://chromedevtools.github.io/devtools-protocol/tot/CSS#type-InheritedAnimatedStyleEntry
+type InheritedAnimatedStyleEntry struct {
+	AnimationStyles  []*AnimationStyle `json:"animationStyles,omitempty"`  // Styles coming from the animations of the ancestor, if any, in the style inheritance chain.
+	TransitionsStyle *Style            `json:"transitionsStyle,omitempty"` // The style coming from the transitions of the ancestor, if any, in the style inheritance chain.
 }
 
 // InheritedPseudoElementMatches inherited pseudo element matches from
@@ -176,6 +194,7 @@ type Rule struct {
 	Layers           []*Layer          `json:"layers,omitempty"`           // Cascade layer array. Contains the layer hierarchy that this rule belongs to starting with the innermost layer and going outwards.
 	Scopes           []*Scope          `json:"scopes,omitempty"`           // @scope CSS at-rule array. The array enumerates @scope at-rules starting with the innermost one, going outwards.
 	RuleTypes        []RuleType        `json:"ruleTypes,omitempty"`        // The array keeps the types of ancestor CSSRules from the innermost going outwards.
+	StartingStyles   []*StartingStyle  `json:"startingStyles,omitempty"`   // @starting-style CSS at-rule array. The array enumerates @starting-style at-rules starting with the innermost one, going outwards.
 }
 
 // RuleType enum indicating the type of a CSS rule, used to represent the
@@ -192,12 +211,13 @@ func (t RuleType) String() string {
 
 // RuleType values.
 const (
-	RuleTypeMediaRule     RuleType = "MediaRule"
-	RuleTypeSupportsRule  RuleType = "SupportsRule"
-	RuleTypeContainerRule RuleType = "ContainerRule"
-	RuleTypeLayerRule     RuleType = "LayerRule"
-	RuleTypeScopeRule     RuleType = "ScopeRule"
-	RuleTypeStyleRule     RuleType = "StyleRule"
+	RuleTypeMediaRule         RuleType = "MediaRule"
+	RuleTypeSupportsRule      RuleType = "SupportsRule"
+	RuleTypeContainerRule     RuleType = "ContainerRule"
+	RuleTypeLayerRule         RuleType = "LayerRule"
+	RuleTypeScopeRule         RuleType = "ScopeRule"
+	RuleTypeStyleRule         RuleType = "StyleRule"
+	RuleTypeStartingStyleRule RuleType = "StartingStyleRule"
 )
 
 // MarshalEasyJSON satisfies easyjson.Marshaler.
@@ -226,6 +246,8 @@ func (t *RuleType) UnmarshalEasyJSON(in *jlexer.Lexer) {
 		*t = RuleTypeScopeRule
 	case RuleTypeStyleRule:
 		*t = RuleTypeStyleRule
+	case RuleTypeStartingStyleRule:
+		*t = RuleTypeStartingStyleRule
 
 	default:
 		in.AddError(fmt.Errorf("unknown RuleType value: %v", v))
@@ -335,12 +357,13 @@ type MediaQueryExpression struct {
 //
 // See: https://chromedevtools.github.io/devtools-protocol/tot/CSS#type-CSSContainerQuery
 type ContainerQuery struct {
-	Text         string           `json:"text"`                   // Container query text.
-	Range        *SourceRange     `json:"range,omitempty"`        // The associated rule header range in the enclosing stylesheet (if available).
-	StyleSheetID StyleSheetID     `json:"styleSheetId,omitempty"` // Identifier of the stylesheet containing this object (if exists).
-	Name         string           `json:"name,omitempty"`         // Optional name for the container.
-	PhysicalAxes dom.PhysicalAxes `json:"physicalAxes,omitempty"` // Optional physical axes queried for the container.
-	LogicalAxes  dom.LogicalAxes  `json:"logicalAxes,omitempty"`  // Optional logical axes queried for the container.
+	Text               string           `json:"text"`                         // Container query text.
+	Range              *SourceRange     `json:"range,omitempty"`              // The associated rule header range in the enclosing stylesheet (if available).
+	StyleSheetID       StyleSheetID     `json:"styleSheetId,omitempty"`       // Identifier of the stylesheet containing this object (if exists).
+	Name               string           `json:"name,omitempty"`               // Optional name for the container.
+	PhysicalAxes       dom.PhysicalAxes `json:"physicalAxes,omitempty"`       // Optional physical axes queried for the container.
+	LogicalAxes        dom.LogicalAxes  `json:"logicalAxes,omitempty"`        // Optional logical axes queried for the container.
+	QueriesScrollState bool             `json:"queriesScrollState,omitempty"` // true if the query contains scroll-state() queries.
 }
 
 // Supports CSS Supports at-rule descriptor.
@@ -367,6 +390,14 @@ type Scope struct {
 // See: https://chromedevtools.github.io/devtools-protocol/tot/CSS#type-CSSLayer
 type Layer struct {
 	Text         string       `json:"text"`                   // Layer name.
+	Range        *SourceRange `json:"range,omitempty"`        // The associated rule header range in the enclosing stylesheet (if available).
+	StyleSheetID StyleSheetID `json:"styleSheetId,omitempty"` // Identifier of the stylesheet containing this object (if exists).
+}
+
+// StartingStyle CSS Starting Style at-rule descriptor.
+//
+// See: https://chromedevtools.github.io/devtools-protocol/tot/CSS#type-CSSStartingStyle
+type StartingStyle struct {
 	Range        *SourceRange `json:"range,omitempty"`        // The associated rule header range in the enclosing stylesheet (if available).
 	StyleSheetID StyleSheetID `json:"styleSheetId,omitempty"` // Identifier of the stylesheet containing this object (if exists).
 }

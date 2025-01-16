@@ -1,17 +1,17 @@
 template:
-  path: https://raw.githubusercontent.com/argoproj/argo-cd/master/manifests/install.yaml
+  path: https://raw.githubusercontent.com/seinshah/cvci/main/examples/example.template.html
   customizer:
     style: |
-      .header {
-        color: red;
+      h1 {
+        color: chocolate;
       }
 page:
   size: A4
   margin:
-    top: 0.4
-    right: 0.4
-    bottom: 0.4
-    left: 0.4
+    top: 0.1
+    right: 0.1
+    bottom: 0.1
+    left: 0.1
 bio:
   name: Hossein Shahsahebi
   title: Backend Lead Engineer
@@ -53,7 +53,7 @@ workExperiences:
 educations:
   header: "Educations2"
   entities:
-    - degree: M	aster of Science (MSc)
+    - degree: Master of Science (MSc)
       field: Computer Science
       university: University of Tehran
       startDate: 09/2014

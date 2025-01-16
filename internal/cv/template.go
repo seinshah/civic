@@ -6,39 +6,21 @@ import (
 	"errors"
 	"fmt"
 	"html/template"
+	"io"
 	"log/slog"
+	"reflect"
 	"slices"
 	"strings"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/seinshah/cvci/internal/pkg/loader"
 	"github.com/seinshah/cvci/internal/pkg/types"
 	"github.com/seinshah/flattenhtml"
 )
 
 const (
-	metaAttributeAppVersion        = "app-version"
-	metaAttributeTemplateDirection = "template-direction"
+	metaAttributeAppVersion        = "app-version"        // nolint: unused
+	metaAttributeTemplateDirection = "template-direction" // nolint: unused
 )
-
-type TemplateConfig struct {
-	// AppVersion is the current version of the application.
-	AppVersion string `validate:"required,semver"`
-
-	// TemplatePath is the path to the HTML template.
-	TemplatePath string `validate:"required"`
-
-	// Customizer is the manual customization that will be added to
-	// the template.
-	Customizer types.Customizer
-}
-
-type Template struct {
-	content     []byte
-	cursor      *flattenhtml.Cursor
-	nodeManager *flattenhtml.NodeManager
-	config      TemplateConfig
-}
 
 var (
 	ErrNonParsableTemplate = errors.New("HTML template cannot be parsed")
@@ -47,7 +29,9 @@ var (
 )
 
 var (
-	forbiddenTags      = []string{"script", "iframe", "link"}
+	forbiddenTags = []string{"script", "iframe", "link"} // nolint: unused
+
+	// nolint: unused
 	forbiddenException = map[string]map[string][]string{
 		"link": {
 			"rel": []string{"rel"},
@@ -55,15 +39,10 @@ var (
 	}
 )
 
-func NewTemplate(ctx context.Context, config TemplateConfig) (*Template, error) {
-	templateLoader, err := loader.NewGeneralLoader(config.TemplatePath)
+func (h *Handler) parseTemplate(ctx context.Context, config *types.Schema) ([]byte, error) {
+	templateLoader, err := loader.NewGeneralLoader(config.Template.Path)
 	if err != nil {
-		return nil, fmt.Errorf("failed to load template file (%s): %w", config.TemplatePath, err)
-	}
-
-	validate := validator.New(validator.WithRequiredStructEnabled())
-	if err = validate.Struct(config); err != nil {
-		return nil, fmt.Errorf("invalid template config: %w", err)
+		return nil, fmt.Errorf("failed to load template file (%s): %w", config.Template.Path, err)
 	}
 
 	content, err := templateLoader.Load(ctx)
@@ -71,94 +50,120 @@ func NewTemplate(ctx context.Context, config TemplateConfig) (*Template, error) 
 		return nil, err
 	}
 
-	nodeManager, err := flattenhtml.NewNodeManagerFromReader(bytes.NewReader(content))
+	tpl, err := template.New("cvci").Parse(string(content))
+	if err != nil {
+		slog.Debug("", "template", string(content))
+
+		return nil, fmt.Errorf("failed to parse the template: %w", err)
+	}
+
+	var processedTemplate bytes.Buffer
+
+	if err = tpl.Execute(&processedTemplate, config); err != nil {
+		slog.Debug("", "template", string(content), "data", config)
+
+		return nil, fmt.Errorf("failed to execute the template: %w", err)
+	}
+
+	nodeManager, cursor, err := initiateFlattener(&processedTemplate)
 	if err != nil {
 		return nil, errors.Join(ErrNonParsableTemplate, err)
+	}
+
+	if err = runTemplateValidations(cursor, h.appVersion); err != nil {
+		return nil, err
+	}
+
+	if err = customizeTemplate(cursor, config.Template.Customizer); err != nil {
+		slog.Warn("failed to register new node", "error", err, "customizer", config.Template.Customizer)
+	}
+
+	var output bytes.Buffer
+
+	if err = nodeManager.Render(&output); err != nil {
+		return nil, fmt.Errorf("failed to render the modified template: %w", err)
+	}
+
+	return output.Bytes(), nil
+}
+
+func initiateFlattener(data io.Reader) (*flattenhtml.NodeManager, *flattenhtml.Cursor, error) {
+	nodeManager, err := flattenhtml.NewNodeManagerFromReader(data)
+	if err != nil {
+		return nil, nil, errors.Join(ErrNonParsableTemplate, err)
 	}
 
 	multiCursor, err := nodeManager.Parse(flattenhtml.NewTagFlattener())
 	if err != nil {
-		return nil, errors.Join(ErrNonParsableTemplate, err)
+		return nil, nil, errors.Join(ErrNonParsableTemplate, err)
 	}
 
 	cursor := multiCursor.First()
-	for cursor != nil {
-		return nil, fmt.Errorf("no cursor: %w", ErrNonParsableTemplate)
+	for cursor == nil {
+		return nil, nil, fmt.Errorf("no cursor: %w", ErrNonParsableTemplate)
 	}
 
-	return &Template{
-		content:     content,
-		cursor:      cursor,
-		nodeManager: nodeManager,
-		config:      config,
-	}, nil
+	return nodeManager, cursor, nil
 }
 
-func (t *Template) Validate() error {
-	validators := []func() error{
-		t.validateForbiddenTags,
-		t.validateAppVersion,
-	}
-
-	for _, tplValidator := range validators {
-		if err := tplValidator(); err != nil {
-			return err
-		}
-	}
-
-	return t.processModifications()
-}
-
-func (t *Template) Process(config *types.Schema) ([]byte, error) {
-	tpl, err := template.New("cvci").Parse(string(t.content))
-	if err != nil {
-		return nil, fmt.Errorf("failed to parse the template: %w", err)
-	}
-
-	var processedTempl bytes.Buffer
-
-	if err = tpl.Execute(&processedTempl, config); err != nil {
-		return nil, fmt.Errorf("failed to execute the template: %w", err)
-	}
-
-	return processedTempl.Bytes(), nil
-}
-
-func (t *Template) processModifications() error {
-	var modified bool
-
-	if t.config.Customizer.Style != "" {
-		if node := t.cursor.SelectNodes("head").First(); node != nil {
+func customizeTemplate(htmlCursor *flattenhtml.Cursor, customizer types.Customizer) error {
+	if customizer.Style != "" {
+		if node := htmlCursor.SelectNodes("head").First(); node != nil {
 			styleTag := node.AppendChild(
 				flattenhtml.NodeTypeElement,
 				"style",
 				map[string]string{"type": "text/css", "data-source": "cvci_customizer"},
 			)
 
-			styleTag.AppendChild(flattenhtml.NodeTypeText, t.config.Customizer.Style, nil)
+			styleTag.AppendChild(flattenhtml.NodeTypeText, customizer.Style, nil)
 
-			if err := t.cursor.RegisterNewNode(styleTag); err != nil {
-				slog.Warn("failed to register new node", "error", err)
+			if err := htmlCursor.RegisterNewNode(styleTag); err != nil {
+				return err
 			}
-
-			modified = true
 		}
-	}
-
-	if modified {
-		var outBuffer bytes.Buffer
-
-		if err := t.nodeManager.Render(&outBuffer); err != nil {
-			return fmt.Errorf("failed to render the modified template: %w", err)
-		}
-
-		t.content = outBuffer.Bytes()
 	}
 
 	return nil
 }
 
-func (t *Template) validateForbiddenTags() error {
+func runTemplateValidations(htmlCursor *flattenhtml.Cursor, appVersion string) error {
+	v := &templateValidator{
+		cursor:     htmlCursor,
+		appVersion: appVersion,
+	}
+
+	vv := reflect.ValueOf(v)
+
+	for i := range vv.NumMethod() {
+		validatorMethod := vv.Method(i)
+
+		if validatorMethod.Kind() != reflect.Func {
+			continue
+		} else if validatorMethod.Type().NumIn() != 0 || validatorMethod.Type().NumOut() != 1 {
+			continue
+		}
+
+		mOut := validatorMethod.Call(nil)
+		if err, ok := mOut[0].Interface().(error); ok {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// templateValidator is an internal type wrapper to define template's tag validators.
+// Any method defined on this type with no input arguments and an error return type,
+// will be executed during runTemplateValidations.
+type templateValidator struct {
+	cursor     *flattenhtml.Cursor
+	appVersion string
+}
+
+// validateForbiddenTags checks if the provided template includes any forbidden tag listed
+// in forbiddenTags. It considers forbiddenException and ignore scenarios depicted in the map.
+// nolint: unused
+func (t *templateValidator) validateForbiddenTags() error {
 	for _, tag := range forbiddenTags {
 		tags := t.cursor.SelectNodes(tag)
 
@@ -192,7 +197,10 @@ func (t *Template) validateForbiddenTags() error {
 	return nil
 }
 
-func (t *Template) validateAppVersion() error {
+// validateAppVersion checks if the provided template supports the current app version.
+// It does so by comparing the major version of the app with the major version of the template.
+// nolint: unused
+func (t *templateValidator) validateAppVersion() error {
 	metaTag := t.cursor.SelectNodes("meta").
 		Filter(
 			flattenhtml.WithAttributeValueAs("name", metaAttributeAppVersion),
@@ -208,7 +216,7 @@ func (t *Template) validateAppVersion() error {
 		return fmt.Errorf("empty %s: %w", metaAttributeAppVersion, ErrMismatchAppVersion)
 	}
 
-	appMajor := strings.TrimPrefix(strings.Split(t.config.AppVersion, ".")[0], "v")
+	appMajor := strings.TrimPrefix(strings.Split(t.appVersion, ".")[0], "v")
 	templateAppMajor := strings.TrimPrefix(strings.Split(tplAppVersion, ".")[0], "v")
 
 	if appMajor != templateAppMajor {

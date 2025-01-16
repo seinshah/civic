@@ -7,20 +7,20 @@
         <meta charset="utf-8" name="app-version" content="v0.1">
         <meta charset="utf-8" name="template-direction" content="LTR">
 
-        @page {
-            size: {{.Page.Size}};
-            margin: {{.Page.Margin.Top}} {{.Page.Margin.Right}} {{.Page.Margin.Bottom}} {{.Page.Margin.Left}};
-        }
-
         {{/* You can use link tags with stylesheet rel */}}
 
         <style>
+            @page {
+                size: {{.Page.Size}};
+                margin: {{.Page.Margin.Top}} {{.Page.Margin.Right}} {{.Page.Margin.Bottom}} {{.Page.Margin.Left}};
+            }
+
             body {
                 font-family: Arial, sans-serif;
             }
         </style>
 
-        {{/* Customizer CSS code provided by the configuration file will be added here automatically if present  */}}
+        {{/* Customizer CSS code provided by the configuration file will be added here automatically  */}}
     </head>
 
     <body>
@@ -46,7 +46,7 @@
                 <li>Phone: {{.}}</li>
                 {{end}}
 
-                {{range .Social}}
+                {{range .Socials}}
                 <li>Social Media: <a href="{{.}}" target="_blank">{{.}}</a></li>
                 {{end}}
             </ul>
@@ -83,9 +83,9 @@
 
                 {{if len .Details | eq 1}}
                 <p>{{index .Details 0}}</p>
-                {{else with .Details}}
+                {{else}}
                 <ul>
-                    {{range .}}
+                    {{range .Details}}
                     <li>{{.}}</li>
                     {{end}}
                 </ul>
@@ -121,9 +121,9 @@
 
                 {{if len .Details | eq 1}}
                 <p>{{index .Details 0}}</p>
-                {{else with .Details}}
+                {{else}}
                 <ul>
-                    {{range .}}
+                    {{range .Details}}
                     <li>{{.}}</li>
                     {{end}}
                 </ul>
@@ -155,25 +155,6 @@
                     {{.IssueDate}}
                     {{with .ExpirationDate}} - {{.}} {{end}}
                 </p>
-
-                {{if len .Details | eq 1}}
-                <p>{{index .Details 0}}</p>
-                {{else with .Details}}
-                <ul>
-                    {{range .}}
-                    <li>{{.}}</li>
-                    {{end}}
-                </ul>
-                {{end}}
-
-                {{with .Technologies}}
-                <p>
-                    <strong>Tech Stack: </strong>
-                    {{range .}}
-                    <span>{{.}}</span> -
-                    {{end}}
-                </p>
-                {{end}}
             </div>
             {{end}}
         </div>
@@ -194,9 +175,9 @@
 
                 {{if len .Details | eq 1}}
                 <p>{{index .Details 0}}</p>
-                {{else with .Details}}
+                {{else}}
                 <ul>
-                    {{range .}}
+                    {{range .Details}}
                     <li>{{.}}</li>
                     {{end}}
                 </ul>
@@ -254,21 +235,23 @@
         {{with .CustomSections}}
         <hr />
 
-        <div>
-            <h2>{{.Header}}</h2>
-
+        {{range .}}
             <div>
-                {{if len .Details | eq 1}}
-                <p>{{index .Details 0}}</p>
-                {{else with .Details}}
-                <ul>
-                    {{range .}}
-                    <li>{{.}}</li>
+                <h2>{{.Header}}</h2>
+
+                <div>
+                    {{if len .Details | eq 1}}
+                    <p>{{index .Details 0}}</p>
+                    {{else}}
+                    <ul>
+                        {{range .Details}}
+                        <li>{{.}}</li>
+                        {{end}}
+                    </ul>
                     {{end}}
-                </ul>
-                {{end}}
+                </div>
             </div>
-        </div>
+            {{end}}
         {{end}}
     </body>
 </html>
