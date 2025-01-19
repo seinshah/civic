@@ -89,8 +89,8 @@ skills:
   entities:
     - category: Backend
       items:
-        - Name: Go
-          Description: "Proficient"
+        - name: Go
+          description: "Proficient"
 
 projects:
   header: "Projects2"

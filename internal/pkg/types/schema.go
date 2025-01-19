@@ -1,5 +1,21 @@
 package types
 
+import (
+	"errors"
+
+	"github.com/creasty/defaults"
+	"github.com/go-playground/validator/v10"
+	"gopkg.in/yaml.v3"
+)
+
+var ErrEmptySchemaPath = errors.New("schema file path is empty")
+
+//go:generate go-enum --names
+
+// SchemaType is the type of schema being used to generate the CV.
+// ENUM(yaml, yml).
+type SchemaType string
+
 type Customizer struct {
 	// Style is a block of css code that will be added in a style tag
 	// at the end of the HEAD section of the template.
@@ -13,7 +29,7 @@ type Schema struct {
 	// that will be used to create the resume or cv.
 	Template struct {
 		// Path is the path to the template file. It can be a local path to the template file
-		// on the host, or a HTTP link to where the template is located.
+		// on the host, or an HTTP link to where the template is located.
 		// If you provide a remote path, the link should refer to the raw HTML file.
 		Path string `validate:"required" yaml:"path"`
 
@@ -44,12 +60,12 @@ type Schema struct {
 		// About is a short description about the person.
 		About string `yaml:"about"`
 
-		Contact struct {
+		Contact *struct {
 			// Location is the current location of the person.
 			Location string `yaml:"location"`
 
 			// Website contains the link to the portfolio of the person.
-			Website string `validate:"url" yaml:"website"`
+			Website string `validate:"omitempty,url" yaml:"website"`
 
 			// Email is the email address of the person.
 			Email string `validate:"required,email" yaml:"email"`
@@ -59,7 +75,7 @@ type Schema struct {
 
 			// Social contains the links to the social media profiles of the person.
 			Socials []string `validate:"dive,url" yaml:"social"`
-		} `yaml:"contact"`
+		} `validate:"omitempty" yaml:"contact"`
 
 		// CustomData is the list of any additional key and values that is going to be
 		// part of the personal information section of the resume or cv.
@@ -69,11 +85,11 @@ type Schema struct {
 
 			// Value of the custom data.
 			Value string `validate:"required" yaml:"value"`
-		} `yaml:"customData"`
+		} `validate:"omitempty,dive" yaml:"customData"`
 	} `validate:"required" yaml:"bio"`
 
 	// WorkExperiences contains all the work experiences of the person.
-	WorkExperiences struct {
+	WorkExperiences *struct {
 		// Header is the printed header/title of this section.
 		Header string `default:"Work Experiences" yaml:"header"`
 
@@ -99,11 +115,11 @@ type Schema struct {
 
 			// Technologies are the list of tools and technologies that you were exposed to during the job.
 			Technologies []string `validate:"dive,min=1" yaml:"technologies"`
-		} `validate:"required,min=1" yaml:"entities"`
-	} `yaml:"workExperiences"`
+		} `validate:"required,min=1,dive" yaml:"entities"`
+	} `validate:"omitempty" yaml:"workExperiences"`
 
 	// Educations contains all the educations of the person.
-	Educations struct {
+	Educations *struct {
 		// Header is the printed header/title of this section.
 		Header string `default:"Educations" yaml:"header"`
 
@@ -132,11 +148,11 @@ type Schema struct {
 
 			// Technologies are the list of tools and technologies that you were exposed to during the study.
 			Technologies []string `validate:"dive,min=1" yaml:"technologies"`
-		} `validate:"required,min=1" yaml:"entities"`
-	} `yaml:"educations"`
+		} `validate:"required,min=1,dive" yaml:"entities"`
+	} `validate:"omitempty" yaml:"educations"`
 
 	// Certificates contains all the certificates of the person.
-	Certificates struct {
+	Certificates *struct {
 		// Header is the printed header/title of this section.
 		Header string `default:"Certificates" yaml:"header"`
 
@@ -152,11 +168,11 @@ type Schema struct {
 
 			// ExpiryDate is the date when the certificate will expire. There is no validation for the date format.
 			ExpirationDate string `yaml:"expirationDate"`
-		} `validate:"required,min=1" yaml:"entities"`
-	} `yaml:"certificates"`
+		} `validate:"required,min=1,dive" yaml:"entities"`
+	} `validate:"omitempty" yaml:"certificates"`
 
 	// Publications contains all the publications of the person.
-	Publications struct {
+	Publications *struct {
 		// Header is the printed header/title of this section.
 		Header string `default:"Publications" yaml:"header"`
 
@@ -175,11 +191,11 @@ type Schema struct {
 
 			// Details is the list of details about the publication. There is no validation.
 			Details []string `validate:"dive,min=2" yaml:"details"`
-		} `validate:"required,min=1" yaml:"entities"`
-	} `yaml:"publications"`
+		} `validate:"required,min=1,dive" yaml:"entities"`
+	} `validate:"omitempty" yaml:"publications"`
 
 	// Skills contains all the skills of the person separated by category.
-	Skills struct {
+	Skills *struct {
 		// Header is the printed header/title of this section.
 		Header string `default:"Skills" yaml:"header"`
 
@@ -195,12 +211,12 @@ type Schema struct {
 				// Description is any arbitrary detail of this skill. This might be interpreted
 				// in certain way by each template.
 				Description string `yaml:"description"`
-			} `validate:"required,min=1" yaml:"items"`
-		} `validate:"required,min=1" yaml:"entities"`
-	} `yaml:"skills"`
+			} `validate:"required,min=1,dive" yaml:"items"`
+		} `validate:"required,min=1,dive" yaml:"entities"`
+	} `validate:"omitempty" yaml:"skills"`
 
 	// Projects contains all the projects of the person.
-	Projects struct {
+	Projects *struct {
 		// Header is the printed header/title of this section.
 		Header string `default:"Projects" yaml:"header"`
 
@@ -212,16 +228,42 @@ type Schema struct {
 			Link string `validate:"required,url" yaml:"link"`
 
 			// Details is the list of details about the project.
-			Details []string `validate:"required,min=1" yaml:"details"`
-		} `validate:"required,min=1" yaml:"entities"`
-	} `yaml:"projects"`
+			Details []string `validate:"dive,min=1" yaml:"details"`
+		} `validate:"required,min=1,dive" yaml:"entities"`
+	} `validate:"omitempty" yaml:"projects"`
 
 	// CustomSections contains all the custom sections that you want to add to the resume or cv.
 	CustomSections []struct {
 		// Header is the title of the custom section.
-		Header string `validate:"required" yaml:"header"`
+		Header string `validate:"required,min=1" yaml:"header"`
 
 		// A list of arbitrary details to be shown under this section.
-		Details []string `validate:"required,min=1" yaml:"details"`
-	} `yaml:"customSections"`
+		Details []string `validate:"required,min=1,dive,min=2" yaml:"details"`
+	} `validate:"omitempty,dive" yaml:"customSections"`
+}
+
+func NewSchema(content []byte, contentType SchemaType) (*Schema, error) {
+	data := Schema{}
+
+	switch contentType {
+	case SchemaTypeYaml, SchemaTypeYml:
+		if err := yaml.Unmarshal(content, &data); err != nil {
+			return nil, err
+		}
+
+	default:
+		return nil, ErrInvalidSchemaType
+	}
+
+	// defaults should be set after loading the provided schema as defaults won't be set
+	// for nil structs.
+	if err := defaults.Set(&data); err != nil {
+		return nil, err
+	}
+
+	return &data, nil
+}
+
+func (s *Schema) IsValid() error {
+	return validator.New(validator.WithRequiredStructEnabled()).Struct(s)
 }

@@ -5,17 +5,11 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/creasty/defaults"
-	"github.com/go-playground/validator/v10"
 	"github.com/seinshah/cvci/internal/pkg/loader"
 	"github.com/seinshah/cvci/internal/pkg/types"
-	"gopkg.in/yaml.v3"
 )
 
-var (
-	ErrInvalidContent             = errors.New("configuration format is not valid")
-	ErrInvalidConfigurationFormat = errors.New("configuration format does not match the schema")
-)
+var ErrInvalidSchemaFormat = errors.New("schema file format does not match the schema")
 
 func (h *Handler) parseSchemaFile(ctx context.Context) (*types.Schema, error) {
 	confLoader, err := loader.NewGeneralLoader(h.schemaFilePath)
@@ -28,20 +22,14 @@ func (h *Handler) parseSchemaFile(ctx context.Context) (*types.Schema, error) {
 		return nil, err
 	}
 
-	data := types.Schema{}
-
-	if err = defaults.Set(&data); err != nil {
-		return nil, errors.Join(ErrInvalidContent, err)
+	data, err := types.NewSchema(content, h.schemaType)
+	if err != nil {
+		return nil, err
 	}
 
-	if err = yaml.Unmarshal(content, &data); err != nil {
-		return nil, errors.Join(ErrInvalidContent, err)
+	if err = data.IsValid(); err != nil {
+		return nil, errors.Join(ErrInvalidSchemaFormat, err)
 	}
 
-	validate := validator.New(validator.WithRequiredStructEnabled())
-	if err = validate.Struct(&data); err != nil {
-		return nil, errors.Join(ErrInvalidConfigurationFormat, err)
-	}
-
-	return &data, nil
+	return data, nil
 }

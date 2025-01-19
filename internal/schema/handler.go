@@ -2,7 +2,6 @@ package schema
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"log/slog"
 	"os"
@@ -12,8 +11,6 @@ import (
 )
 
 const sampleConfigPath = "https://raw.githubusercontent.com/seinshah/cvci/main/examples/example.schema.yaml"
-
-var ErrEmptyOutputPath = errors.New("output path is empty")
 
 type Handler struct{}
 
@@ -28,7 +25,15 @@ func (h *Handler) Init(
 	outputPath string,
 ) error {
 	if outputPath == "" {
-		return ErrEmptyOutputPath
+		return types.ErrEmptyOutputPath
+	}
+
+	x := types.DetectFileType[types.SchemaType](outputPath)
+	if !x.IsValid() {
+		return fmt.Errorf(
+			"%w: couldn't detect the file type from %s. (valid types: %v)",
+			types.ErrInvalidSchemaType, outputPath, types.SchemaTypeNames(),
+		)
 	}
 
 	slog.Debug("loading sample cv schema file", "path", sampleConfigPath)

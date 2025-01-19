@@ -12,18 +12,15 @@ import (
 	"github.com/seinshah/cvci/internal/pkg/types"
 )
 
+var ErrGenerateOutput = errors.New("failed to generate the output")
+
 type Handler struct {
 	appVersion     string
 	schemaFilePath string
+	schemaType     types.SchemaType
 	outputPath     string
 	outputType     types.OutputType
 }
-
-var (
-	errEmptyOutputPath     = errors.New("output path is empty")
-	errInvalidOutputType   = errors.New("invalid file type")
-	errEmptySchemaFilePath = errors.New("schema file path is empty")
-)
 
 func NewHandler(
 	appVersion string,
@@ -31,26 +28,37 @@ func NewHandler(
 	outputPath string,
 ) (*Handler, error) {
 	if outputPath == "" {
-		return nil, errEmptyOutputPath
+		return nil, types.ErrEmptyOutputPath
 	}
 
-	outputType := types.DetectOutputType(outputPath)
+	outputType := types.DetectFileType[types.OutputType](outputPath)
 	if !outputType.IsValid() {
 		return nil, fmt.Errorf(
 			"%w: couldn't detect the file type from %s. (valid types: %v)",
-			errInvalidOutputType,
+			types.ErrInvalidOutputType,
 			outputPath,
 			types.OutputTypeNames(),
 		)
 	}
 
 	if schemaFilePath == "" {
-		return nil, errEmptySchemaFilePath
+		return nil, types.ErrEmptySchemaPath
+	}
+
+	schemaType := types.DetectFileType[types.SchemaType](schemaFilePath)
+	if !schemaType.IsValid() {
+		return nil, fmt.Errorf(
+			"%w: couldn't detect the file type from %s. (valid types: %v)",
+			types.ErrInvalidSchemaType,
+			schemaFilePath,
+			types.SchemaTypeNames(),
+		)
 	}
 
 	return &Handler{
-		schemaFilePath: schemaFilePath,
 		appVersion:     appVersion,
+		schemaFilePath: schemaFilePath,
+		schemaType:     schemaType,
 		outputPath:     outputPath,
 		outputType:     outputType,
 	}, nil
@@ -77,7 +85,7 @@ func (h *Handler) Generate(ctx context.Context) error {
 	}
 
 	if err = output.Render(ctx, templateContent, generator, h.outputPath); err != nil {
-		return fmt.Errorf("failed to render the output: %w", err)
+		return errors.Join(ErrGenerateOutput, err)
 	}
 
 	slog.Info("Rendered the output. Your CV should be ready on " + h.outputPath)
@@ -105,7 +113,7 @@ func (h *Handler) getOutputGenerator(confData *types.Schema) (types.OutputGenera
 		slog.Debug("Rendering the HTML...")
 
 	default:
-		return nil, errInvalidOutputType
+		return nil, types.ErrInvalidOutputType
 	}
 
 	return generator, nil

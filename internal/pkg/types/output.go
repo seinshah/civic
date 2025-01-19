@@ -2,9 +2,12 @@ package types
 
 import (
 	"context"
+	"errors"
 	"path/filepath"
 	"strings"
 )
+
+var ErrEmptyOutputPath = errors.New("output path is empty")
 
 //go:generate go-enum --names
 
@@ -18,8 +21,11 @@ type OutputGenerator interface {
 	Generate(ctx context.Context, content []byte) ([]byte, error)
 }
 
-func DetectOutputType(outputPath string) OutputType {
+// DetectFileType detects the file type from the file path extension.
+// It casts the detected extension to the provided type.
+// nolint: ireturn
+func DetectFileType[C ~string](outputPath string) C {
 	ext := strings.Replace(filepath.Ext(outputPath), ".", "", 1)
 
-	return OutputType(strings.ToLower(ext))
+	return C(strings.ToLower(ext))
 }

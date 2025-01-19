@@ -26,6 +26,10 @@ var (
 	ErrNonParsableTemplate = errors.New("HTML template cannot be parsed")
 	ErrFoundInvalidTag     = errors.New("found invalid tag in the HTML template")
 	ErrMismatchAppVersion  = errors.New("template does not support the current app version")
+
+	ErrInvalidDirective = errors.New("template file is using an unsupported directive")
+
+	errNoCursor = errors.New("no cursor")
 )
 
 var (
@@ -34,7 +38,7 @@ var (
 	// nolint: unused
 	forbiddenException = map[string]map[string][]string{
 		"link": {
-			"rel": []string{"rel"},
+			"rel": []string{"stylesheet"},
 		},
 	}
 )
@@ -62,7 +66,7 @@ func (h *Handler) parseTemplate(ctx context.Context, config *types.Schema) ([]by
 	if err = tpl.Execute(&processedTemplate, config); err != nil {
 		slog.Debug("", "template", string(content), "data", config)
 
-		return nil, fmt.Errorf("failed to execute the template: %w", err)
+		return nil, errors.Join(ErrInvalidDirective, err)
 	}
 
 	nodeManager, cursor, err := initiateFlattener(&processedTemplate)
@@ -90,17 +94,17 @@ func (h *Handler) parseTemplate(ctx context.Context, config *types.Schema) ([]by
 func initiateFlattener(data io.Reader) (*flattenhtml.NodeManager, *flattenhtml.Cursor, error) {
 	nodeManager, err := flattenhtml.NewNodeManagerFromReader(data)
 	if err != nil {
-		return nil, nil, errors.Join(ErrNonParsableTemplate, err)
+		return nil, nil, err
 	}
 
 	multiCursor, err := nodeManager.Parse(flattenhtml.NewTagFlattener())
 	if err != nil {
-		return nil, nil, errors.Join(ErrNonParsableTemplate, err)
+		return nil, nil, err
 	}
 
 	cursor := multiCursor.First()
 	for cursor == nil {
-		return nil, nil, fmt.Errorf("no cursor: %w", ErrNonParsableTemplate)
+		return nil, nil, errNoCursor
 	}
 
 	return nodeManager, cursor, nil
@@ -153,17 +157,17 @@ func runTemplateValidations(htmlCursor *flattenhtml.Cursor, appVersion string) e
 }
 
 // templateValidator is an internal type wrapper to define template's tag validators.
-// Any method defined on this type with no input arguments and an error return type,
+// Any exposed method defined on this type with no input arguments and an error return type,
 // will be executed during runTemplateValidations.
 type templateValidator struct {
 	cursor     *flattenhtml.Cursor
 	appVersion string
 }
 
-// validateForbiddenTags checks if the provided template includes any forbidden tag listed
+// ValidateForbiddenTags checks if the provided template includes any forbidden tag listed
 // in forbiddenTags. It considers forbiddenException and ignore scenarios depicted in the map.
 // nolint: unused
-func (t *templateValidator) validateForbiddenTags() error {
+func (t *templateValidator) ValidateForbiddenTags() error {
 	for _, tag := range forbiddenTags {
 		tags := t.cursor.SelectNodes(tag)
 
@@ -197,10 +201,10 @@ func (t *templateValidator) validateForbiddenTags() error {
 	return nil
 }
 
-// validateAppVersion checks if the provided template supports the current app version.
+// ValidateAppVersion checks if the provided template supports the current app version.
 // It does so by comparing the major version of the app with the major version of the template.
 // nolint: unused
-func (t *templateValidator) validateAppVersion() error {
+func (t *templateValidator) ValidateAppVersion() error {
 	metaTag := t.cursor.SelectNodes("meta").
 		Filter(
 			flattenhtml.WithAttributeValueAs("name", metaAttributeAppVersion),

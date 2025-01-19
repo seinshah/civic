@@ -31,7 +31,13 @@ func TestHandler_Init(t *testing.T) {
 		{
 			name:     "empty_path",
 			hasError: true,
-			err:      schema.ErrEmptyOutputPath,
+			err:      types.ErrEmptyOutputPath,
+		},
+		{
+			name:       "invalid type",
+			outputPath: os.TempDir() + "/test.json",
+			hasError:   true,
+			err:        types.ErrInvalidSchemaType,
 		},
 		{
 			name:       "error loading sample schema",
