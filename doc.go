@@ -1,1 +1,1 @@
-package cvci
+package civic

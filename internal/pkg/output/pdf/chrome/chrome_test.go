@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/seinshah/cvci/internal/pkg/output/pdf/chrome"
-	"github.com/seinshah/cvci/internal/pkg/types"
+	"github.com/seinshah/civic/internal/pkg/output/pdf/chrome"
+	"github.com/seinshah/civic/internal/pkg/types"
 	"github.com/stretchr/testify/require"
 )
 

@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/seinshah/cvci/internal/pkg/loader"
+	"github.com/seinshah/civic/internal/pkg/loader"
 	"github.com/stretchr/testify/require"
 )
 
@@ -17,7 +17,7 @@ func localFileSetUp(content string) func(t *testing.T) (string, func(t *testing.
 	return func(t *testing.T) (string, func(t *testing.T)) {
 		t.Helper()
 
-		f, err := os.CreateTemp(os.TempDir(), "cvci-test-*.txt")
+		f, err := os.CreateTemp(os.TempDir(), "app-test-*.txt")
 
 		require.NoError(t, err)
 
@@ -54,7 +54,7 @@ func TestNewGeneralLoader(t *testing.T) {
 		},
 		{
 			name: "success-remote",
-			path: "https://raw.githubusercontent.com/seinshah/cvci/refs/heads/main/assets/sample_config.yaml",
+			path: "https://raw.githubusercontent.com/seinshah/app/refs/heads/main/assets/sample_config.yaml",
 			validateType: func(t *testing.T, l loader.Loader) {
 				_, ok := l.(*loader.RemoteLoader)
 

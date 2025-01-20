@@ -6,10 +6,10 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/seinshah/cvci/internal/pkg/output"
-	"github.com/seinshah/cvci/internal/pkg/output/html"
-	"github.com/seinshah/cvci/internal/pkg/output/pdf/chrome"
-	"github.com/seinshah/cvci/internal/pkg/types"
+	"github.com/seinshah/civic/internal/pkg/output"
+	"github.com/seinshah/civic/internal/pkg/output/html"
+	"github.com/seinshah/civic/internal/pkg/output/pdf/chrome"
+	"github.com/seinshah/civic/internal/pkg/types"
 )
 
 var ErrGenerateOutput = errors.New("failed to generate the output")

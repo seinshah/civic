@@ -3,8 +3,8 @@ package command
 import (
 	"fmt"
 
-	"github.com/seinshah/cvci/internal/cv"
-	"github.com/seinshah/cvci/internal/pkg/types"
+	"github.com/seinshah/civic/internal/cv"
+	"github.com/seinshah/civic/internal/pkg/types"
 	"github.com/spf13/cobra"
 )
 

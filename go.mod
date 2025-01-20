@@ -1,4 +1,4 @@
-module github.com/seinshah/cvci
+module github.com/seinshah/civic
 
 go 1.23
 

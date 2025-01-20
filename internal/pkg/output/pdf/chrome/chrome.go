@@ -8,7 +8,7 @@ import (
 	"github.com/chromedp/cdproto/page"
 	"github.com/chromedp/chromedp"
 	"github.com/go-playground/validator/v10"
-	"github.com/seinshah/cvci/internal/pkg/types"
+	"github.com/seinshah/civic/internal/pkg/types"
 )
 
 type options struct {

@@ -3,8 +3,10 @@ package types
 import "os"
 
 const (
-	DefaultOutputFileName = "cvci.pdf"
-	DefaultSchemaFileName = ".cvci.yaml"
+	DefaultAppName        = "civic"
+	DefaultAppOwner       = "seinshah"
+	DefaultOutputFileName = DefaultAppName + ".pdf"
+	DefaultSchemaFileName = "." + DefaultAppName + ".yaml"
 	DefaultPageSize       = PageSizeA4
 	DefaultFilePermission = 0o600
 )

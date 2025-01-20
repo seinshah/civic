@@ -1,8 +1,8 @@
 package command
 
 import (
-	"github.com/seinshah/cvci/internal/pkg/types"
-	"github.com/seinshah/cvci/internal/schema"
+	"github.com/seinshah/civic/internal/pkg/types"
+	"github.com/seinshah/civic/internal/schema"
 	"github.com/spf13/cobra"
 )
 

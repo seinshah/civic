@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/seinshah/cvci/internal/pkg/types"
+	"github.com/seinshah/civic/internal/pkg/types"
 	"github.com/stretchr/testify/require"
 
 	_ "embed"
@@ -261,7 +261,7 @@ func TestExampleSchema(t *testing.T) {
 			validate: func(value any) bool {
 				d := value.(string)
 
-				return d == "https://raw.githubusercontent.com/seinshah/cvci/main/examples/example.template.html"
+				return d == "https://raw.githubusercontent.com/seinshah/civic/main/examples/example.template.html"
 			},
 		},
 		{

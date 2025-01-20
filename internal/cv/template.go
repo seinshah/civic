@@ -10,10 +10,10 @@ import (
 	"log/slog"
 	"reflect"
 	"slices"
-	"strings"
 
-	"github.com/seinshah/cvci/internal/pkg/loader"
-	"github.com/seinshah/cvci/internal/pkg/types"
+	"github.com/seinshah/civic/internal/pkg/loader"
+	"github.com/seinshah/civic/internal/pkg/types"
+	"github.com/seinshah/civic/internal/pkg/version"
 	"github.com/seinshah/flattenhtml"
 )
 
@@ -54,7 +54,7 @@ func (h *Handler) parseTemplate(ctx context.Context, config *types.Schema) ([]by
 		return nil, err
 	}
 
-	tpl, err := template.New("cvci").Parse(string(content))
+	tpl, err := template.New(types.DefaultAppName).Parse(string(content))
 	if err != nil {
 		slog.Debug("", "template", string(content))
 
@@ -116,7 +116,7 @@ func customizeTemplate(htmlCursor *flattenhtml.Cursor, customizer types.Customiz
 			styleTag := node.AppendChild(
 				flattenhtml.NodeTypeElement,
 				"style",
-				map[string]string{"type": "text/css", "data-source": "cvci_customizer"},
+				map[string]string{"type": "text/css", "data-source": types.DefaultAppName + "_customizer"},
 			)
 
 			styleTag.AppendChild(flattenhtml.NodeTypeText, customizer.Style, nil)
@@ -220,13 +220,24 @@ func (t *templateValidator) ValidateAppVersion() error {
 		return fmt.Errorf("empty %s: %w", metaAttributeAppVersion, ErrMismatchAppVersion)
 	}
 
-	appMajor := strings.TrimPrefix(strings.Split(t.appVersion, ".")[0], "v")
-	templateAppMajor := strings.TrimPrefix(strings.Split(tplAppVersion, ".")[0], "v")
+	templateV, err := version.Parse(tplAppVersion)
+	if err != nil {
+		return fmt.Errorf("invalid %s: %w", metaAttributeAppVersion, ErrMismatchAppVersion)
+	}
 
-	if appMajor != templateAppMajor {
-		return fmt.Errorf(
-			"app version mismatch (%s != %s): %w",
-			appMajor, templateAppMajor, ErrMismatchAppVersion,
+	appV, err := version.Parse(t.appVersion)
+	if err != nil {
+		return fmt.Errorf("invalid app version: %w", err)
+	}
+
+	if appV.Major() != templateV.Major() {
+		return fmt.Errorf("expected v%d template version: %w", appV.Major(), ErrMismatchAppVersion)
+	}
+
+	if !appV.Equal(templateV) {
+		slog.Warn(
+			"template's minor/patch version does not match the app version and in rare cases might lead to unexpected behavior",
+			"template", templateV, "app", appV,
 		)
 	}
 

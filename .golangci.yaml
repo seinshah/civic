@@ -19,6 +19,7 @@ linters-settings:
   varnamelen:
     ignore-names:
       - wg
+      - ok
   gci:
     sections:
     - default

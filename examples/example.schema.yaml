@@ -1,5 +1,5 @@
 template:
-  path: https://raw.githubusercontent.com/seinshah/cvci/main/examples/example.template.html
+  path: https://raw.githubusercontent.com/seinshah/civic/main/examples/example.template.html
   customizer:
     style: |
       h1 {

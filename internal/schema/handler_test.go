@@ -5,8 +5,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/seinshah/cvci/internal/pkg/types"
-	"github.com/seinshah/cvci/internal/schema"
+	"github.com/seinshah/civic/internal/pkg/types"
+	"github.com/seinshah/civic/internal/schema"
 	"github.com/stretchr/testify/require"
 )
 

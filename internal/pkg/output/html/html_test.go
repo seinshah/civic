@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/seinshah/cvci/internal/pkg/output/html"
+	"github.com/seinshah/civic/internal/pkg/output/html"
 	"github.com/stretchr/testify/require"
 )
 

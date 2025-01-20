@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/seinshah/cvci/internal/pkg/loader"
+	"github.com/seinshah/civic/internal/pkg/loader"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -58,7 +58,7 @@ func TestLocalLoader_Load(t *testing.T) {
 			path: func(t *testing.T) (string, func(t *testing.T)) {
 				t.Helper()
 
-				f, err := os.CreateTemp(os.TempDir(), "cvci-test-*.txt")
+				f, err := os.CreateTemp(os.TempDir(), "app-test-*.txt")
 
 				require.NoError(t, err)
 

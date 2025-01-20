@@ -3,7 +3,7 @@ package html
 import (
 	"context"
 
-	"github.com/seinshah/cvci/internal/pkg/types"
+	"github.com/seinshah/civic/internal/pkg/types"
 )
 
 type Engine struct{}

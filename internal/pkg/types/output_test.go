@@ -3,7 +3,7 @@ package types_test
 import (
 	"testing"
 
-	"github.com/seinshah/cvci/internal/pkg/types"
+	"github.com/seinshah/civic/internal/pkg/types"
 	"github.com/stretchr/testify/require"
 )
 

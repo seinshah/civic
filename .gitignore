@@ -41,8 +41,8 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
-# CVCI
-.cvci.yaml
-.cvci.yml
-cvci.pdf
-cvci.html
+# App Specific
+.civic.yaml
+.civic.yml
+civic.pdf
+civic.html

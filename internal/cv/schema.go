@@ -5,8 +5,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/seinshah/cvci/internal/pkg/loader"
-	"github.com/seinshah/cvci/internal/pkg/types"
+	"github.com/seinshah/civic/internal/pkg/loader"
+	"github.com/seinshah/civic/internal/pkg/types"
 )
 
 var ErrInvalidSchemaFormat = errors.New("schema file format does not match the schema")
@@ -14,7 +14,7 @@ var ErrInvalidSchemaFormat = errors.New("schema file format does not match the s
 func (h *Handler) parseSchemaFile(ctx context.Context) (*types.Schema, error) {
 	confLoader, err := loader.NewGeneralLoader(h.schemaFilePath)
 	if err != nil {
-		return nil, fmt.Errorf("failed to load cvci schema file (%s): %w", h.schemaFilePath, err)
+		return nil, fmt.Errorf("failed to load the schema file (%s): %w", h.schemaFilePath, err)
 	}
 
 	content, err := confLoader.Load(ctx)

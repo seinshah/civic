@@ -7,9 +7,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/seinshah/cvci/internal/cv"
-	"github.com/seinshah/cvci/internal/pkg/loader"
-	"github.com/seinshah/cvci/internal/pkg/types"
+	"github.com/seinshah/civic/internal/cv"
+	"github.com/seinshah/civic/internal/pkg/loader"
+	"github.com/seinshah/civic/internal/pkg/types"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v3"
 )
@@ -61,7 +61,7 @@ func getSchemaPath(t *testing.T, schemaContent map[string]any, templateContent s
 	}
 
 	if createTemplate {
-		templateFile, err = os.CreateTemp(os.TempDir(), "cvci-test-template*.html")
+		templateFile, err = os.CreateTemp(os.TempDir(), "app-test-template*.html")
 
 		require.NoError(t, err)
 
@@ -76,7 +76,7 @@ func getSchemaPath(t *testing.T, schemaContent map[string]any, templateContent s
 
 	require.NoError(t, err)
 
-	schemaFile, err = os.CreateTemp(os.TempDir(), "cvci-test-schema*.yaml")
+	schemaFile, err = os.CreateTemp(os.TempDir(), "app-test-schema*.yaml")
 
 	require.NoError(t, err)
 
@@ -529,7 +529,7 @@ func TestHandler_Generate(t *testing.T) {
 					ext = tc.outputExtension
 				}
 
-				tc.outputFile = fmt.Sprintf("%s/cvci-generate-test-output-%d.%s", os.TempDir(), i, ext)
+				tc.outputFile = fmt.Sprintf("%s/app-generate-test-output-%d.%s", os.TempDir(), i, ext)
 			}
 
 			h, err := cv.NewHandler("v0.1.0", tc.schemaFilePath(t), tc.outputFile)

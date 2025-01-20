@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/seinshah/cvci/internal/pkg/types"
+	"github.com/seinshah/civic/internal/pkg/types"
 )
 
 func Render(

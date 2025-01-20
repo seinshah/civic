@@ -6,11 +6,11 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/seinshah/cvci/internal/pkg/loader"
-	"github.com/seinshah/cvci/internal/pkg/types"
+	"github.com/seinshah/civic/internal/pkg/loader"
+	"github.com/seinshah/civic/internal/pkg/types"
 )
 
-const sampleConfigPath = "https://raw.githubusercontent.com/seinshah/cvci/main/examples/example.schema.yaml"
+const sampleConfigPath = "https://raw.githubusercontent.com/seinshah/civic/main/examples/example.schema.yaml"
 
 type Handler struct{}
 
