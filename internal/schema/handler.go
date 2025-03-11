@@ -2,10 +2,12 @@ package schema
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log/slog"
 	"os"
 
+	"github.com/invopop/jsonschema"
 	"github.com/seinshah/civic/internal/pkg/loader"
 	"github.com/seinshah/civic/internal/pkg/types"
 )
@@ -50,6 +52,31 @@ func (h *Handler) Init(
 	}
 
 	slog.Info("Sample schema file created successfully", "path", outputPath)
+
+	return nil
+}
+
+func (h *Handler) JSON(_ context.Context) error {
+	outputPath := types.CurrentWDPath(types.DefaultSchemaJSONFileName)
+
+	reflector := new(jsonschema.Reflector)
+
+	reflector.ExpandedStruct = true
+
+	if err := reflector.AddGoComments("github.com/seinshah/civic", "./internal/pkg/types"); err != nil {
+		return fmt.Errorf("failed to add go comments: %w", err)
+	}
+
+	s := reflector.Reflect(&types.Schema{})
+
+	marshaledSchema, err := json.MarshalIndent(s, "", "  ")
+	if err != nil {
+		return fmt.Errorf("failed to marshal schema to json: %w", err)
+	}
+
+	if err = os.WriteFile(outputPath, marshaledSchema, types.DefaultFilePermission); err != nil {
+		return fmt.Errorf("failed to write the json schema file: %w", err)
+	}
 
 	return nil
 }

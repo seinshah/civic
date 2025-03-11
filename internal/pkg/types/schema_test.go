@@ -257,7 +257,7 @@ func TestExampleSchema(t *testing.T) {
 	}{
 		{
 			name: "template path",
-			key:  "Template.Path",
+			key:  "template.path",
 			validate: func(value any) bool {
 				d := value.(string)
 
@@ -266,7 +266,7 @@ func TestExampleSchema(t *testing.T) {
 		},
 		{
 			name: "bio contact socials",
-			key:  "Bio.Contact.Socials",
+			key:  "bio.contact.socials",
 			validate: func(value any) bool {
 				d := value.([]any)
 
@@ -275,7 +275,7 @@ func TestExampleSchema(t *testing.T) {
 		},
 		{
 			name: "work experiences header",
-			key:  "WorkExperiences.Header",
+			key:  "workExperiences.header",
 			validate: func(value any) bool {
 				d := value.(string)
 
@@ -284,7 +284,7 @@ func TestExampleSchema(t *testing.T) {
 		},
 		{
 			name: "education first entity details",
-			key:  "Educations.Entities[0].Details",
+			key:  "educations.entities[0].details",
 			validate: func(value any) bool {
 				d := value.([]any)
 
@@ -293,7 +293,7 @@ func TestExampleSchema(t *testing.T) {
 		},
 		{
 			name: "skills default header",
-			key:  "Skills.Header",
+			key:  "skills.header",
 			validate: func(value any) bool {
 				d := value.(string)
 
@@ -302,7 +302,7 @@ func TestExampleSchema(t *testing.T) {
 		},
 		{
 			name: "second custom section details",
-			key:  "CustomSections[1].Details",
+			key:  "customSections[1].details",
 			validate: func(value any) bool {
 				d := value.([]any)
 

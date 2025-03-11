@@ -12,10 +12,10 @@ type PageSize string
 
 // PageMargin is the type for defining the page margin for the PDF.
 type PageMargin struct {
-	Top    float64 `validate:"gte=0,lt=3" yaml:"top"`
-	Right  float64 `validate:"gte=0,lt=3" yaml:"right"`
-	Bottom float64 `validate:"gte=0,lt=3" yaml:"bottom"`
-	Left   float64 `validate:"gte=0,lt=3" yaml:"left"`
+	Top    float64 `json:"top,omitempty"    validate:"gte=0,lt=3" yaml:"top"`
+	Right  float64 `json:"right,omitempty"  validate:"gte=0,lt=3" yaml:"right"`
+	Bottom float64 `json:"bottom,omitempty" validate:"gte=0,lt=3" yaml:"bottom"`
+	Left   float64 `json:"left,omitempty"   validate:"gte=0,lt=3" yaml:"left"`
 }
 
 const (

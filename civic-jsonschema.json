@@ -1,0 +1,554 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/seinshah/civic/internal/pkg/types/schema",
+  "$defs": {
+    "Customizer": {
+      "properties": {
+        "style": {
+          "type": "string",
+          "description": "Style is a block of css code that will be added in a style tag\nat the end of the HEAD section of the template."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "PageMargin": {
+      "properties": {
+        "top": {
+          "type": "number"
+        },
+        "right": {
+          "type": "number"
+        },
+        "bottom": {
+          "type": "number"
+        },
+        "left": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "PageMargin is the type for defining the page margin for the PDF."
+    },
+    "SchemaBio": {
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name is the full name of the person."
+        },
+        "title": {
+          "type": "string",
+          "description": "Title is the career title of the person."
+        },
+        "about": {
+          "type": "string",
+          "description": "About is a short description about the person."
+        },
+        "contact": {
+          "$ref": "#/$defs/SchemaBioContact"
+        },
+        "customData": {
+          "items": {
+            "$ref": "#/$defs/SchemaBioCustomData"
+          },
+          "type": "array",
+          "description": "CustomData is the list of any additional key and values that is going to be\npart of the personal information section of the resume or cv."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "name",
+        "title"
+      ]
+    },
+    "SchemaBioContact": {
+      "properties": {
+        "location": {
+          "type": "string",
+          "description": "Location is the current location of the person."
+        },
+        "website": {
+          "type": "string",
+          "description": "Website contains the link to the portfolio of the person."
+        },
+        "email": {
+          "type": "string",
+          "description": "Email is the email address of the person."
+        },
+        "phone": {
+          "type": "string",
+          "description": "Phone is the phone number of the person."
+        },
+        "Socials": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "description": "Social contains the links to the social media profiles of the person."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "email",
+        "Socials"
+      ]
+    },
+    "SchemaBioCustomData": {
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Label or title of the custom data."
+        },
+        "value": {
+          "type": "string",
+          "description": "Value of the custom data."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "value"
+      ]
+    },
+    "SchemaCertificates": {
+      "properties": {
+        "header": {
+          "type": "string",
+          "description": "Header is the printed header/title of this section."
+        },
+        "entities": {
+          "items": {
+            "$ref": "#/$defs/SchemaCertificatesEntity"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "entities"
+      ]
+    },
+    "SchemaCertificatesEntity": {
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Title is the title of the certificate."
+        },
+        "issuer": {
+          "type": "string",
+          "description": "Issuer is the name of the issuer of the certificate."
+        },
+        "issueDate": {
+          "type": "string",
+          "description": "IssueDate is the date when the certificate was issued. There is no validation for the date format."
+        },
+        "expirationDate": {
+          "type": "string",
+          "description": "ExpiryDate is the date when the certificate will expire. There is no validation for the date format."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "title",
+        "issuer",
+        "issueDate",
+        "expirationDate"
+      ]
+    },
+    "SchemaCustomSection": {
+      "properties": {
+        "header": {
+          "type": "string",
+          "description": "Header is the title of the custom section."
+        },
+        "details": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "description": "A list of arbitrary details to be shown under this section."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "header",
+        "details"
+      ]
+    },
+    "SchemaEducations": {
+      "properties": {
+        "header": {
+          "type": "string",
+          "description": "Header is the printed header/title of this section."
+        },
+        "entities": {
+          "items": {
+            "$ref": "#/$defs/SchemaEducationsEntity"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "entities"
+      ]
+    },
+    "SchemaEducationsEntity": {
+      "properties": {
+        "degree": {
+          "type": "string",
+          "description": "Degree is the degree that you have achieved."
+        },
+        "field": {
+          "type": "string",
+          "description": "Field is the field of study."
+        },
+        "university": {
+          "type": "string",
+          "description": "University is the name of the university or place of study."
+        },
+        "location": {
+          "type": "string",
+          "description": "Location is the location of the university or place of study."
+        },
+        "startDate": {
+          "type": "string",
+          "description": "StartDate is the start date of the study. There is no validation for the date format."
+        },
+        "endDate": {
+          "type": "string",
+          "description": "EndDate is the end date of the study. There is no validation for the date format."
+        },
+        "details": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "description": "Details is the list of details about the study. There is no validation.\nIt can include the list of achievements, responsibilities, and any other details."
+        },
+        "technologies": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "description": "Technologies are the list of tools and technologies that you were exposed to during the study."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "degree",
+        "field",
+        "university",
+        "startDate"
+      ]
+    },
+    "SchemaPage": {
+      "properties": {
+        "size": {
+          "type": "string",
+          "description": "Size is the size of the page for the PDF.\nValid values are: A4, B4, A, Arch-A, Letter.\nIf an invalid value is provided, it will default to A4."
+        },
+        "margin": {
+          "$ref": "#/$defs/PageMargin",
+          "description": "Margin is the margin of the page for the PDF.\nAbsence of margin for each side leads to 0.\nIMPORTANT: Dimensions are in inch."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "SchemaProjects": {
+      "properties": {
+        "header": {
+          "type": "string",
+          "description": "Header is the printed header/title of this section."
+        },
+        "entities": {
+          "items": {
+            "$ref": "#/$defs/SchemaProjectsEntity"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "entities"
+      ]
+    },
+    "SchemaProjectsEntity": {
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Title is the title of the project."
+        },
+        "link": {
+          "type": "string",
+          "description": "Link is the link to the project."
+        },
+        "details": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "description": "Details is the list of details about the project."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "title",
+        "link"
+      ]
+    },
+    "SchemaPublications": {
+      "properties": {
+        "header": {
+          "type": "string",
+          "description": "Header is the printed header/title of this section."
+        },
+        "Entities": {
+          "items": {
+            "$ref": "#/$defs/SchemaPublicationsEntity"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "Entities"
+      ]
+    },
+    "SchemaPublicationsEntity": {
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Title is the title of the publication."
+        },
+        "publisher": {
+          "type": "string",
+          "description": "Publisher is the name of the publisher of the publication."
+        },
+        "publishDate": {
+          "type": "string",
+          "description": "PublishDate is the date when the publication was published. There is no validation for the date format."
+        },
+        "link": {
+          "type": "string",
+          "description": "Link is the link to the publication."
+        },
+        "details": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "description": "Details is the list of details about the publication. There is no validation."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "title",
+        "publisher",
+        "publishDate",
+        "link"
+      ]
+    },
+    "SchemaSkills": {
+      "properties": {
+        "header": {
+          "type": "string",
+          "description": "Header is the printed header/title of this section."
+        },
+        "entities": {
+          "items": {
+            "$ref": "#/$defs/SchemaSkillsEntity"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "entities"
+      ]
+    },
+    "SchemaSkillsEntity": {
+      "properties": {
+        "category": {
+          "type": "string",
+          "description": "Category is the category of the skill."
+        },
+        "items": {
+          "items": {
+            "$ref": "#/$defs/SchemaSkillsEntityItem"
+          },
+          "type": "array",
+          "description": "Items contain all the tools and technologies in this category that you have experience with."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "category",
+        "items"
+      ]
+    },
+    "SchemaSkillsEntityItem": {
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name is the name of the skill."
+        },
+        "description": {
+          "type": "string",
+          "description": "Description is any arbitrary detail of this skill. This might be interpreted\nin certain way by each template."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "name"
+      ]
+    },
+    "SchemaTemplate": {
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Path is the path to the template file. It can be a local path to the template file\non the host, or an HTTP link to where the template is located.\nIf you provide a remote path, the link should refer to the raw HTML file."
+        },
+        "customizer": {
+          "$ref": "#/$defs/Customizer",
+          "description": "Customizer is a way for you to customize the template in use."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "path"
+      ]
+    },
+    "SchemaWorkExperienceEntity": {
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Title is the title of the job."
+        },
+        "company": {
+          "type": "string",
+          "description": "Company is the name of the company."
+        },
+        "location": {
+          "type": "string",
+          "description": "Location is the location of the job."
+        },
+        "startDate": {
+          "type": "string",
+          "description": "StartDate is the start date of the job. There is no validation for the date format."
+        },
+        "endDate": {
+          "type": "string",
+          "description": "EndDate is the end date of the job. There is no validation for the date format."
+        },
+        "details": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "description": "Details is the list of details about the job. There is no validation.\nIt can include the list of achievements, responsibilities, and any other details."
+        },
+        "technologies": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "description": "Technologies are the list of tools and technologies that you were exposed to during the job."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "title",
+        "company",
+        "startDate"
+      ]
+    },
+    "SchemaWorkExperiences": {
+      "properties": {
+        "header": {
+          "type": "string",
+          "description": "Header is the printed header/title of this section."
+        },
+        "entities": {
+          "items": {
+            "$ref": "#/$defs/SchemaWorkExperienceEntity"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "entities"
+      ]
+    }
+  },
+  "properties": {
+    "template": {
+      "$ref": "#/$defs/SchemaTemplate",
+      "description": "Template contains all the information related to the template file\nthat will be used to create the resume or cv."
+    },
+    "page": {
+      "$ref": "#/$defs/SchemaPage"
+    },
+    "bio": {
+      "$ref": "#/$defs/SchemaBio",
+      "description": "Bio contains all the personal information of the person."
+    },
+    "workExperiences": {
+      "$ref": "#/$defs/SchemaWorkExperiences",
+      "description": "WorkExperiences contains all the work experiences of the person."
+    },
+    "educations": {
+      "$ref": "#/$defs/SchemaEducations",
+      "description": "Educations contains all the educations of the person."
+    },
+    "certificates": {
+      "$ref": "#/$defs/SchemaCertificates",
+      "description": "Certificates contains all the certificates of the person."
+    },
+    "publications": {
+      "$ref": "#/$defs/SchemaPublications",
+      "description": "Publications contains all the publications of the person."
+    },
+    "skills": {
+      "$ref": "#/$defs/SchemaSkills",
+      "description": "Skills contains all the skills of the person separated by category."
+    },
+    "projects": {
+      "$ref": "#/$defs/SchemaProjects",
+      "description": "Projects contains all the projects of the person."
+    },
+    "customSections": {
+      "items": {
+        "$ref": "#/$defs/SchemaCustomSection"
+      },
+      "type": "array",
+      "description": "CustomSections contains all the custom sections that you want to add to the resume or cv."
+    }
+  },
+  "additionalProperties": false,
+  "type": "object",
+  "required": [
+    "bio"
+  ],
+  "description": "Schema is the architecture of the configuration file that will be provided by the user to be used for generating the final resume or cv."
+}

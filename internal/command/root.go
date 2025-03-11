@@ -2,10 +2,10 @@ package command
 
 import (
 	"context"
-	"github.com/seinshah/civic/internal/pkg/types"
 	"log/slog"
 
 	"github.com/seinshah/civic/internal/pkg/logger"
+	"github.com/seinshah/civic/internal/pkg/types"
 	"github.com/spf13/cobra"
 )
 
@@ -29,7 +29,7 @@ func NewCommand(version string) *Command {
 		Use:     types.DefaultAppName,
 		Version: version,
 		Short:   types.DefaultAppName + " - CV as a Code",
-		Long: `A tool to help maintaining and extending CVs or resumes 
+		Long: `A tool to help maintaining and extending CVs or resumes
 easily by separating the template from the content.`,
 		PreRun: func(_ *cobra.Command, _ []string) {
 			cmd.updateLogLevel()

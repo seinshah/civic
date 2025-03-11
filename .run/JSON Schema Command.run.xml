@@ -1,0 +1,28 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="JSON Schema Command" type="GoApplicationRunConfiguration" factoryName="Go Application">
+    <module name="civic" />
+    <working_directory value="$PROJECT_DIR$" />
+    <go_parameters value="-ldflags &quot;-X main.Version=0.1.0&quot;" />
+    <useCustomBuildTags value="true" />
+    <parameters value="schema json" />
+    <EXTENSION ID="com.fapiko.jetbrains.plugins.better_direnv.runconfigs.GolandRunConfigurationExtension">
+      <option name="DIRENV_ENABLED" value="false" />
+      <option name="DIRENV_TRUSTED" value="false" />
+    </EXTENSION>
+    <EXTENSION ID="net.ashald.envfile">
+      <option name="IS_ENABLED" value="false" />
+      <option name="IS_SUBST" value="false" />
+      <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+      <option name="IS_IGNORE_MISSING_FILES" value="false" />
+      <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
+      <ENTRIES>
+        <ENTRY IS_ENABLED="true" PARSER="runconfig" IS_EXECUTABLE="false" />
+      </ENTRIES>
+    </EXTENSION>
+    <kind value="PACKAGE" />
+    <package value="github.com/seinshah/civic/cmd" />
+    <directory value="$PROJECT_DIR$" />
+    <filePath value="$PROJECT_DIR$" />
+    <method v="2" />
+  </configuration>
+</component>

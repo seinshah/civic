@@ -3,12 +3,13 @@ package types
 import "os"
 
 const (
-	DefaultAppName        = "civic"
-	DefaultAppOwner       = "seinshah"
-	DefaultOutputFileName = DefaultAppName + ".pdf"
-	DefaultSchemaFileName = "." + DefaultAppName + ".yaml"
-	DefaultPageSize       = PageSizeA4
-	DefaultFilePermission = 0o600
+	DefaultAppName            = "civic"
+	DefaultAppOwner           = "seinshah"
+	DefaultOutputFileName     = DefaultAppName + ".pdf"
+	DefaultSchemaFileName     = "." + DefaultAppName + ".yaml"
+	DefaultSchemaJSONFileName = DefaultAppName + "-jsonschema.json"
+	DefaultPageSize           = PageSizeA4
+	DefaultFilePermission     = 0o600
 )
 
 func CurrentWDPath(filename string) string {

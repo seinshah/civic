@@ -14,6 +14,7 @@ func (c *Command) getConfigCommands() *cobra.Command {
 	}
 
 	cmd.AddCommand(getSchemaInitCommand())
+	cmd.AddCommand(getSchemaJSONCommand())
 
 	return cmd
 }
@@ -37,6 +38,21 @@ func getSchemaInitCommand() *cobra.Command {
 		"output", "o", types.CurrentWDPath(types.DefaultSchemaFileName),
 		`path to the output configuration file.`,
 	)
+
+	return cmd
+}
+
+func getSchemaJSONCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "json",
+		Short: "Generate the json schema of the civic's configuration schema.",
+		Long:  `This can be integrated with different editors to provide auto-completion and validation.`,
+		RunE: func(cmd *cobra.Command, _ []string) error {
+			handler := schema.NewHandler()
+
+			return handler.JSON(cmd.Context())
+		},
+	}
 
 	return cmd
 }

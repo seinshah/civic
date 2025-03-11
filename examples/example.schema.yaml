@@ -24,7 +24,7 @@ bio:
     website: https://example.com
     email: me@example.com
     phone: +1 123 456 7890
-    social:
+    socials:
       - https://linkedin.com/in/username/
       - https://github.com/username
   customData:
