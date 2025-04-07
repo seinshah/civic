@@ -260,7 +260,7 @@ func TestHandler_Generate(t *testing.T) {
 							"title": "Software Engineer",
 						},
 					},
-					"{{.SomeInvalidDirective}}",
+					"{{.Raw.SomeInvalidDirective}}",
 				)
 			},
 			hasError: true,
@@ -415,8 +415,8 @@ func TestHandler_Generate(t *testing.T) {
 								<link rel="stylesheet" href="style.css" />
 							</head>
 							<body>
-								<h1>{{.Bio.Name}}</h1>
-								<h2>{{.Bio.Title}}</h2>
+								<h1>{{.Raw.Bio.Name}}</h1>
+								<h2>{{.Raw.Bio.Title}}</h2>
 							</body>
 						</html>
 					`,
@@ -454,14 +454,14 @@ func TestHandler_Generate(t *testing.T) {
 								<link rel="stylesheet" href="style.css" />
 							</head>
 							<body>
-								<h1>{{.Bio.Name}}</h1>
-								<h2>{{.Bio.Title}}</h2>
-								{{with .WorkExperiences}}<h3>Work Experiences</h3>{{end}}
-								{{with .Educations}}<h3>Educations</h3>{{end}}
-								{{with .Certificates}}<h3>Certificates</h3>{{end}}
-								{{with .Publications}}<h3>Publications</h3>{{end}}
-								{{with .Skills}}<h3>Skills</h3>{{end}}
-								{{with .CustomSections}}<h3>CustomSections</h3>{{end}}
+								<h1>{{.Raw.Bio.Name}}</h1>
+								<h2>{{.Raw.Bio.Title}}</h2>
+								{{with .Raw.WorkExperiences}}<h3>Work Experiences</h3>{{end}}
+								{{with .Raw.Educations}}<h3>Educations</h3>{{end}}
+								{{with .Raw.Certificates}}<h3>Certificates</h3>{{end}}
+								{{with .Raw.Publications}}<h3>Publications</h3>{{end}}
+								{{with .Raw.Skills}}<h3>Skills</h3>{{end}}
+								{{with .Raw.CustomSections}}<h3>CustomSections</h3>{{end}}
 							</body>
 						</html>
 					`,
@@ -509,8 +509,8 @@ func TestHandler_Generate(t *testing.T) {
 								<link rel="stylesheet" href="style.css" />
 							</head>
 							<body>
-								<h1>{{.Bio.Name}}</h1>
-								<h2>{{.Bio.Title}}</h2>
+								<h1>{{.Raw.Bio.Name}}</h1>
+								<h2>{{.Raw.Bio.Title}}</h2>
 							</body>
 						</html>
 					`,

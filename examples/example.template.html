@@ -1,9 +1,9 @@
-{{/* gotype: github.com/seinshah/civic/internal/pkg/types.Schema */}}
+{{/* gotype: github.com/seinshah/civic/internal/pkg/types.TemplateData */}}
 <!DOCTYPE html>
 
 <html lang="en-US">
     <head>
-        <title>{{.Bio.Name}} | {{.Bio.Title}}</title>
+        <title>{{.Raw.Bio.Name}} | {{.Raw.Bio.Title}}</title>
 
         <meta charset="utf-8" name="app-version" content="v0.1">
         <meta charset="utf-8" name="template-direction" content="LTR">
@@ -13,8 +13,8 @@
 
         <style>
             @page {
-                size: {{.Page.Size}};
-                margin: {{.Page.Margin.Top}} {{.Page.Margin.Right}} {{.Page.Margin.Bottom}} {{.Page.Margin.Left}};
+                size: {{.Raw.Page.Size}};
+                margin: {{.Raw.Page.Margin.Top}} {{.Raw.Page.Margin.Right}} {{.Raw.Page.Margin.Bottom}} {{.Raw.Page.Margin.Left}};
             }
 
             body {
@@ -27,10 +27,10 @@
 
     <body>
         <div>
-            <h1>{{.Bio.Name}}</h1>
-            <h2>{{.Bio.Title}}</h2>
+            <h1>{{.Raw.Bio.Name}}</h1>
+            <h2>{{.Raw.Bio.Title}}</h2>
 
-            {{with .Bio.Contact}}
+            {{with .Raw.Bio.Contact}}
             <ul>
                 {{with .Location}}
                 <li>Location: {{.}}</li>
@@ -54,11 +54,11 @@
             </ul>
             {{end}}
 
-            {{with .Bio.About}}
+            {{with .Raw.Bio.About}}
             <p>{{.}}</p>
             {{end}}
 
-            {{range .Bio.CustomData}}
+            {{range .Raw.Bio.CustomData}}
             <p>
                 {{with .Label}}
                 <strong>{{.}}:</strong>
@@ -70,7 +70,7 @@
 
         <hr />
 
-        {{with .WorkExperiences}}
+        {{with .Raw.WorkExperiences}}
         <div>
             <h2>{{.Header}}</h2>
             {{range .Entities}}
@@ -108,7 +108,7 @@
 
         <hr />
 
-        {{with .Educations}}
+        {{with .Raw.Educations}}
         <div>
             <h2>{{.Header}}</h2>
             {{range .Entities}}
@@ -146,7 +146,7 @@
 
         <hr />
 
-        {{with .Certificates}}
+        {{with .Raw.Certificates}}
         <div>
             <h2>{{.Header}}</h2>
             {{range .Entities}}
@@ -164,7 +164,7 @@
 
         <hr />
 
-        {{with .Publications}}
+        {{with .Raw.Publications}}
         <div>
             <h2>{{.Header}}</h2>
             {{range .Entities}}
@@ -191,7 +191,7 @@
 
         <hr />
 
-        {{with .Skills}}
+        {{with .Raw.Skills}}
         <div>
             <h2>{{.Header}}</h2>
             {{range .Entities}}
@@ -213,7 +213,7 @@
 
         <hr />
 
-        {{with .Projects}}
+        {{with .Raw.Projects}}
         <div>
             <h2>{{.Header}}</h2>
             {{range .Entities}}
@@ -234,7 +234,7 @@
         </div>
         {{end}}
 
-        {{with .CustomSections}}
+        {{with .Raw.CustomSections}}
         <hr />
 
         {{range .}}

@@ -3,6 +3,7 @@ module github.com/seinshah/civic
 go 1.24
 
 require (
+	github.com/Masterminds/sprig/v3 v3.2.3
 	github.com/chromedp/cdproto v0.0.0-20250307225615-b9fffb6d31ad
 	github.com/chromedp/chromedp v0.13.1
 	github.com/creasty/defaults v1.8.0
@@ -29,7 +30,6 @@ require (
 	github.com/GaijinEntertainment/go-exhaustruct/v3 v3.3.1 // indirect
 	github.com/Masterminds/goutils v1.1.1 // indirect
 	github.com/Masterminds/semver/v3 v3.3.0 // indirect
-	github.com/Masterminds/sprig/v3 v3.2.3 // indirect
 	github.com/OpenPeeDeeP/depguard/v2 v2.2.0 // indirect
 	github.com/abice/go-enum v0.6.0 // indirect
 	github.com/alecthomas/go-check-sumtype v0.3.1 // indirect

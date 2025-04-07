@@ -12,8 +12,9 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
-# Go workspace file
+# Go
 go.work
+vendor
 
 # Binary files
 main
@@ -46,6 +47,3 @@ fabric.properties
 .civic.yml
 civic.pdf
 civic.html
-
-# temporary
-web/

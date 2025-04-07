@@ -81,7 +81,7 @@
           "type": "string",
           "description": "Phone is the phone number of the person."
         },
-        "Socials": {
+        "socials": {
           "items": {
             "type": "string"
           },
@@ -93,7 +93,7 @@
       "type": "object",
       "required": [
         "email",
-        "Socials"
+        "socials"
       ]
     },
     "SchemaBioCustomData": {
@@ -314,7 +314,7 @@
           "type": "string",
           "description": "Header is the printed header/title of this section."
         },
-        "Entities": {
+        "entities": {
           "items": {
             "$ref": "#/$defs/SchemaPublicationsEntity"
           },
@@ -324,7 +324,7 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "Entities"
+        "entities"
       ]
     },
     "SchemaPublicationsEntity": {
@@ -423,7 +423,11 @@
       "properties": {
         "path": {
           "type": "string",
-          "description": "Path is the path to the template file. It can be a local path to the template file\non the host, or an HTTP link to where the template is located.\nIf you provide a remote path, the link should refer to the raw HTML file."
+          "description": "Path is the path to the template file. It can be a local path to the template file\non the host, or an HTTP link to where the template is located.\nIf you provide a remote path, the link should refer to the raw HTML file.\nProviding either of path or name is required."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name is the template name in the Civic's template registry.\nProviding either of path or name is required."
         },
         "customizer": {
           "$ref": "#/$defs/Customizer",
@@ -431,10 +435,7 @@
         }
       },
       "additionalProperties": false,
-      "type": "object",
-      "required": [
-        "path"
-      ]
+      "type": "object"
     },
     "SchemaWorkExperienceEntity": {
       "properties": {

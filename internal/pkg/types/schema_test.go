@@ -43,11 +43,26 @@ func TestNewSchema(t *testing.T) {
 			},
 		},
 		{
-			name:    "empty template path",
+			name:    "empty template path and name",
 			content: `template: {customizer: {style: "style.css"}}`,
 			failedValidationFields: map[string]string{
-				"Schema.Template.Path": "required",
+				"Schema.Template.Path": "required_without",
+				"Schema.Template.Name": "required_without",
 				"Schema.Bio":           "required",
+			},
+		},
+		{
+			name:    "with template path",
+			content: `template: {path: "path", customizer: {style: "style.css"}}`,
+			failedValidationFields: map[string]string{
+				"Schema.Bio": "required",
+			},
+		},
+		{
+			name:    "with template name",
+			content: `template: {name: "name", customizer: {style: "style.css"}}`,
+			failedValidationFields: map[string]string{
+				"Schema.Bio": "required",
 			},
 		},
 		{
@@ -137,9 +152,7 @@ educations: {entities: [{details: ["a"], technologies: [""]}]}`,
 bio: {name: "ho", title: "title"}
 certificates: {entities: [{expirationDate: "2025-01-19"}]}`,
 			failedValidationFields: map[string]string{
-				"Schema.Certificates.Entities[0].Title":     "required",
-				"Schema.Certificates.Entities[0].Issuer":    "required",
-				"Schema.Certificates.Entities[0].IssueDate": "required",
+				"Schema.Certificates.Entities[0].Title": "required",
 			},
 		},
 		{

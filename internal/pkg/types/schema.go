@@ -26,7 +26,12 @@ type SchemaTemplate struct {
 	// Path is the path to the template file. It can be a local path to the template file
 	// on the host, or an HTTP link to where the template is located.
 	// If you provide a remote path, the link should refer to the raw HTML file.
-	Path string `json:"path" validate:"required" yaml:"path"`
+	// Providing either of path or name is required.
+	Path string `json:"path,omitempty" validate:"required_without=Name" yaml:"path"`
+
+	// Name is the template name in the Civic's template registry.
+	// Providing either of path or name is required.
+	Name string `json:"name,omitempty" validate:"required_without=Path" yaml:"name"`
 
 	// Customizer is a way for you to customize the template in use.
 	Customizer Customizer `json:"customizer,omitempty" yaml:"customizer"`
@@ -156,13 +161,13 @@ type SchemaCertificatesEntity struct {
 	Title string `json:"title" validate:"required" yaml:"title"`
 
 	// Issuer is the name of the issuer of the certificate.
-	Issuer string `json:"issuer" validate:"required" yaml:"issuer"`
+	Issuer string `json:"issuer,omitempty" yaml:"issuer"`
 
 	// IssueDate is the date when the certificate was issued. There is no validation for the date format.
-	IssueDate string `json:"issueDate" validate:"required" yaml:"issueDate"`
+	IssueDate string `json:"issueDate,omitempty" yaml:"issueDate"`
 
 	// ExpiryDate is the date when the certificate will expire. There is no validation for the date format.
-	ExpirationDate string `json:"expirationDate" yaml:"expirationDate"`
+	ExpirationDate string `json:"expirationDate,omitempty" yaml:"expirationDate"`
 }
 
 type SchemaCertificates struct {

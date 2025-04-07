@@ -11,6 +11,7 @@ import (
 	"reflect"
 	"slices"
 
+	"github.com/Masterminds/sprig/v3"
 	"github.com/seinshah/civic/internal/pkg/loader"
 	"github.com/seinshah/civic/internal/pkg/types"
 	"github.com/seinshah/civic/internal/pkg/version"
@@ -23,6 +24,7 @@ const (
 )
 
 var (
+	ErrTemplateNotProvided = errors.New("template path or name is required")
 	ErrNonParsableTemplate = errors.New("HTML template cannot be parsed")
 	ErrFoundInvalidTag     = errors.New("found invalid tag in the HTML template")
 	ErrMismatchAppVersion  = errors.New("template does not support the current app version")
@@ -43,18 +45,13 @@ var (
 	}
 )
 
-func (h *Handler) parseTemplate(ctx context.Context, config *types.Schema) ([]byte, error) {
-	templateLoader, err := loader.NewGeneralLoader(config.Template.Path)
-	if err != nil {
-		return nil, fmt.Errorf("failed to load template file (%s): %w", config.Template.Path, err)
-	}
-
-	content, err := templateLoader.Load(ctx)
+func (h *Handler) parseTemplate(ctx context.Context, config types.TemplateData) ([]byte, error) {
+	content, err := h.getTemplateContent(ctx, config)
 	if err != nil {
 		return nil, err
 	}
 
-	tpl, err := template.New(types.DefaultAppName).Parse(string(content))
+	tpl, err := template.New(types.DefaultAppName).Funcs(sprig.FuncMap()).Parse(string(content))
 	if err != nil {
 		slog.Debug("", "template", string(content))
 
@@ -78,8 +75,8 @@ func (h *Handler) parseTemplate(ctx context.Context, config *types.Schema) ([]by
 		return nil, err
 	}
 
-	if err = customizeTemplate(cursor, config.Template.Customizer); err != nil {
-		slog.Warn("failed to register new node", "error", err, "customizer", config.Template.Customizer)
+	if err = customizeTemplate(cursor, config.Raw.Template.Customizer); err != nil {
+		slog.Warn("failed to register new node", "error", err, "customizer", config.Raw.Template.Customizer)
 	}
 
 	var output bytes.Buffer
@@ -89,6 +86,39 @@ func (h *Handler) parseTemplate(ctx context.Context, config *types.Schema) ([]by
 	}
 
 	return output.Bytes(), nil
+}
+
+func (h *Handler) getTemplateContent(ctx context.Context, config types.TemplateData) ([]byte, error) {
+	if config.Raw.Template.Path == "" && config.Raw.Template.Name == "" {
+		return nil, ErrTemplateNotProvided
+	}
+
+	var templatePath string
+
+	if config.Raw.Template.Path != "" {
+		templatePath = config.Raw.Template.Path
+	} else if config.Raw.Template.Name != "" {
+		appV, err := version.Parse(h.appVersion)
+		if err != nil {
+			return nil, fmt.Errorf("invalid app version: %w", err)
+		}
+
+		templatePath = fmt.Sprintf(
+			"%s/%s/v%d/template.html",
+			types.TemplateRegistryPath,
+			config.Raw.Template.Name,
+			appV.Major(),
+		)
+	}
+
+	templateLoader, err := loader.NewGeneralLoader(templatePath)
+	if err != nil {
+		if !errors.Is(err, loader.ErrInvalidPath) {
+			return nil, fmt.Errorf("failed to load template file (%s): %w", config.Raw.Template.Path, err)
+		}
+	}
+
+	return templateLoader.Load(ctx)
 }
 
 func initiateFlattener(data io.Reader) (*flattenhtml.NodeManager, *flattenhtml.Cursor, error) {
