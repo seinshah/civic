@@ -19,8 +19,10 @@ import (
 )
 
 const (
-	metaAttributeAppVersion        = "app-version"        // nolint: unused
-	metaAttributeTemplateDirection = "template-direction" // nolint: unused
+	metaAttributeAppVersion = "app-version"
+
+	//nolint:unused
+	metaAttributeTemplateDirection = "template-direction"
 )
 
 var (
@@ -35,9 +37,10 @@ var (
 )
 
 var (
-	forbiddenTags = []string{"script", "iframe", "link"} // nolint: unused
+	//nolint: gochecknoglobals
+	forbiddenTags = []string{"script", "iframe", "link"}
 
-	// nolint: unused
+	//nolint: gochecknoglobals
 	forbiddenException = map[string]map[string][]string{
 		"link": {
 			"rel": []string{"stylesheet"},
@@ -178,6 +181,11 @@ func runTemplateValidations(htmlCursor *flattenhtml.Cursor, appVersion string) e
 		}
 
 		mOut := validatorMethod.Call(nil)
+
+		if len(mOut) == 0 {
+			continue
+		}
+
 		if err, ok := mOut[0].Interface().(error); ok {
 			return err
 		}
@@ -196,7 +204,6 @@ type templateValidator struct {
 
 // ValidateForbiddenTags checks if the provided template includes any forbidden tag listed
 // in forbiddenTags. It considers forbiddenException and ignore scenarios depicted in the map.
-// nolint: unused
 func (t *templateValidator) ValidateForbiddenTags() error {
 	for _, tag := range forbiddenTags {
 		tags := t.cursor.SelectNodes(tag)
@@ -209,15 +216,17 @@ func (t *templateValidator) ValidateForbiddenTags() error {
 			var invalidTags []string
 
 			for attribute, exceptionValues := range exceptions {
-				tags.Each(func(node *flattenhtml.Node) {
-					nodeAttrVal, ok := node.Attribute(attribute)
-					if !ok || !slices.Contains(exceptionValues, nodeAttrVal) {
-						invalidTags = append(
-							invalidTags,
-							fmt.Sprintf("%s(%v)", tag, node.Attributes()),
-						)
-					}
-				})
+				tags.Each(
+					func(node *flattenhtml.Node) {
+						nodeAttrVal, ok := node.Attribute(attribute)
+						if !ok || !slices.Contains(exceptionValues, nodeAttrVal) {
+							invalidTags = append(
+								invalidTags,
+								fmt.Sprintf("%s(%v)", tag, node.Attributes()),
+							)
+						}
+					},
+				)
 
 				if len(invalidTags) > 0 {
 					return fmt.Errorf("%w: %v", ErrFoundInvalidTag, invalidTags)
@@ -233,7 +242,6 @@ func (t *templateValidator) ValidateForbiddenTags() error {
 
 // ValidateAppVersion checks if the provided template supports the current app version.
 // It does so by comparing the major version of the app with the major version of the template.
-// nolint: unused
 func (t *templateValidator) ValidateAppVersion() error {
 	metaTag := t.cursor.SelectNodes("meta").
 		Filter(

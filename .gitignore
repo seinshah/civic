@@ -20,9 +20,8 @@ vendor
 main
 cmd/main
 
-# Ignore IDE settings
+# Ignore VSCode
 .vscode
-.idea
 
 # CMake
 cmake-build-*/

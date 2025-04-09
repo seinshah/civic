@@ -86,12 +86,14 @@ func (h *Headless) getLoadContentAction(html string) func(ctx context.Context) e
 
 		wg.Add(1)
 
-		chromedp.ListenTarget(loadCtx, func(ev interface{}) {
-			if _, ok := ev.(*page.EventLoadEventFired); ok {
-				loadCancel()
-				wg.Done()
-			}
-		})
+		chromedp.ListenTarget(
+			loadCtx, func(ev interface{}) {
+				if _, ok := ev.(*page.EventLoadEventFired); ok {
+					loadCancel()
+					wg.Done()
+				}
+			},
+		)
 
 		frameTree, err := page.GetFrameTree().Do(ctx)
 		if err != nil {

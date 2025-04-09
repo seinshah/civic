@@ -26,6 +26,8 @@ func localFileSetUp(content string) func(t *testing.T) (string, func(t *testing.
 		require.NoError(t, err)
 
 		return f.Name(), func(t *testing.T) {
+			t.Helper()
+
 			errD := f.Close()
 
 			require.NoError(t, errD)
@@ -47,6 +49,7 @@ func TestNewGeneralLoader(t *testing.T) {
 			name:  "success-local",
 			setUp: localFileSetUp("success-local-test"),
 			validateType: func(t *testing.T, l loader.Loader) {
+				t.Helper()
 				_, ok := l.(*loader.LocalLoader)
 
 				require.True(t, ok)
@@ -56,6 +59,7 @@ func TestNewGeneralLoader(t *testing.T) {
 			name: "success-remote",
 			path: "https://raw.githubusercontent.com/seinshah/app/refs/heads/main/assets/sample_config.yaml",
 			validateType: func(t *testing.T, l loader.Loader) {
+				t.Helper()
 				_, ok := l.(*loader.RemoteLoader)
 
 				require.True(t, ok)
@@ -72,36 +76,38 @@ func TestNewGeneralLoader(t *testing.T) {
 	}
 
 	for _, tc := range tests {
-		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
+		t.Run(
+			tc.name, func(t *testing.T) {
+				t.Parallel()
 
-			path := tc.path
+				path := tc.path
 
-			if tc.setUp != nil {
-				p, cancel := tc.setUp(t)
-				defer cancel(t)
+				if tc.setUp != nil {
+					p, cancel := tc.setUp(t)
+					defer cancel(t)
 
-				if p != "" {
-					path = p
-				}
-			}
-
-			l, err := loader.NewGeneralLoader(path)
-
-			if tc.hasError {
-				require.Error(t, err)
-
-				if tc.err != nil {
-					require.ErrorIs(t, err, tc.err)
+					if p != "" {
+						path = p
+					}
 				}
 
-				return
-			}
+				l, err := loader.NewGeneralLoader(path)
 
-			require.NoError(t, err)
-			require.NotNil(t, l)
-			t.Logf("loader type %T", l.Loader())
-			tc.validateType(t, l.Loader())
-		})
+				if tc.hasError {
+					require.Error(t, err)
+
+					if tc.err != nil {
+						require.ErrorIs(t, err, tc.err)
+					}
+
+					return
+				}
+
+				require.NoError(t, err)
+				require.NotNil(t, l)
+				t.Logf("loader type %T", l.Loader())
+				tc.validateType(t, l.Loader())
+			},
+		)
 	}
 }

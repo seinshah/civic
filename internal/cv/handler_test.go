@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -24,6 +25,10 @@ func getMapKeyValue(t *testing.T, m map[string]any, key string) any {
 	}
 
 	keys := strings.SplitN(key, ".", 2)
+
+	if len(keys) == 0 {
+		t.Fatalf("empty keys")
+	}
 
 	val, ok := m[keys[0]]
 	if !ok {
@@ -56,7 +61,9 @@ func getSchemaPath(t *testing.T, schemaContent map[string]any, templateContent s
 
 	// replace template.path with the path to the created template file
 	// if it's provided value is "<<template_path>>"
-	if pathVal := getMapKeyValue(t, schemaContent, "template.path"); pathVal != nil && pathVal.(string) == "<<template_path>>" {
+	if pathVal := getMapKeyValue(
+		t, schemaContent, "template.path",
+	); pathVal != nil && pathVal.(string) == "<<template_path>>" {
 		createTemplate = true
 	}
 
@@ -84,17 +91,19 @@ func getSchemaPath(t *testing.T, schemaContent map[string]any, templateContent s
 
 	require.NoError(t, err)
 
-	t.Cleanup(func() {
-		err = os.Remove(schemaFile.Name())
-
-		require.NoError(t, err)
-
-		if createTemplate {
-			err = os.Remove(templateFile.Name())
+	t.Cleanup(
+		func() {
+			err = os.Remove(schemaFile.Name())
 
 			require.NoError(t, err)
-		}
-	})
+
+			if createTemplate {
+				err = os.Remove(templateFile.Name())
+
+				require.NoError(t, err)
+			}
+		},
+	)
 
 	return schemaFile.Name()
 }
@@ -146,24 +155,26 @@ func TestNewHandler(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
+		t.Run(
+			tc.name, func(t *testing.T) {
+				t.Parallel()
 
-			h, err := cv.NewHandler("v0.1.0", tc.schemaFilePath, tc.outputPath)
-			if tc.hasError {
-				require.Error(t, err)
-				require.Nil(t, h)
+				h, err := cv.NewHandler("v0.1.0", tc.schemaFilePath, tc.outputPath)
+				if tc.hasError {
+					require.Error(t, err)
+					require.Nil(t, h)
 
-				if tc.err != nil {
-					require.ErrorIs(t, err, tc.err)
+					if tc.err != nil {
+						require.ErrorIs(t, err, tc.err)
+					}
+
+					return
 				}
 
-				return
-			}
-
-			require.NoError(t, err)
-			require.NotNil(t, h)
-		})
+				require.NoError(t, err)
+				require.NotNil(t, h)
+			},
+		)
 	}
 }
 
@@ -425,7 +436,7 @@ func TestHandler_Generate(t *testing.T) {
 			ctx: func(t *testing.T) (context.Context, context.CancelFunc) {
 				t.Helper()
 
-				return context.WithTimeout(context.Background(), 0)
+				return context.WithTimeout(t.Context(), 0)
 			},
 			hasError: true,
 			err:      context.DeadlineExceeded,
@@ -470,19 +481,32 @@ func TestHandler_Generate(t *testing.T) {
 			validateOutput: func(t *testing.T, outputFile string) {
 				t.Helper()
 
-				data, err := os.ReadFile(outputFile)
+				data, err := os.ReadFile(filepath.Clean(outputFile))
 
 				require.NoError(t, err)
 
 				require.Containsf(t, string(data), "<h1>John Doe</h1>", "Name should be present in the output")
-				require.Containsf(t, string(data), "<h2>Software Engineer</h2>", "Title should be present in the output")
+				require.Containsf(
+					t, string(data), "<h2>Software Engineer</h2>", "Title should be present in the output",
+				)
 
-				require.NotContainsf(t, string(data), "<h3>Work Experiences</h3>", "Work Experiences should not be present in the output")
-				require.NotContainsf(t, string(data), "<h3>Educations</h3>", "Educations should not be present in the output")
-				require.NotContainsf(t, string(data), "<h3>Certificates</h3>", "Certificates should not be present in the output")
-				require.NotContainsf(t, string(data), "<h3>Publications</h3>", "Publications should not be present in the output")
+				require.NotContainsf(
+					t, string(data), "<h3>Work Experiences</h3>",
+					"Work Experiences should not be present in the output",
+				)
+				require.NotContainsf(
+					t, string(data), "<h3>Educations</h3>", "Educations should not be present in the output",
+				)
+				require.NotContainsf(
+					t, string(data), "<h3>Certificates</h3>", "Certificates should not be present in the output",
+				)
+				require.NotContainsf(
+					t, string(data), "<h3>Publications</h3>", "Publications should not be present in the output",
+				)
 				require.NotContainsf(t, string(data), "<h3>Skills</h3>", "Skills should not be present in the output")
-				require.NotContainsf(t, string(data), "<h3>CustomSections</h3>", "CustomSections should not be present in the output")
+				require.NotContainsf(
+					t, string(data), "<h3>CustomSections</h3>", "CustomSections should not be present in the output",
+				)
 			},
 		},
 		{
@@ -520,49 +544,51 @@ func TestHandler_Generate(t *testing.T) {
 	}
 
 	for i, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
+		t.Run(
+			tc.name, func(t *testing.T) {
+				t.Parallel()
 
-			if tc.outputFile == "" {
-				ext := "html"
-				if tc.outputExtension != "" {
-					ext = tc.outputExtension
+				if tc.outputFile == "" {
+					ext := "html"
+					if tc.outputExtension != "" {
+						ext = tc.outputExtension
+					}
+
+					tc.outputFile = fmt.Sprintf("%s/app-generate-test-output-%d.%s", os.TempDir(), i, ext)
 				}
 
-				tc.outputFile = fmt.Sprintf("%s/app-generate-test-output-%d.%s", os.TempDir(), i, ext)
-			}
+				h, err := cv.NewHandler("v0.1.0", tc.schemaFilePath(t), tc.outputFile)
+				require.NoError(t, err)
+				require.NotNil(t, h)
 
-			h, err := cv.NewHandler("v0.1.0", tc.schemaFilePath(t), tc.outputFile)
-			require.NoError(t, err)
-			require.NotNil(t, h)
+				ctx := t.Context()
 
-			ctx := context.Background()
+				if tc.ctx != nil {
+					var cancel context.CancelFunc
 
-			if tc.ctx != nil {
-				var cancel context.CancelFunc
+					ctx, cancel = tc.ctx(t)
 
-				ctx, cancel = tc.ctx(t)
-
-				defer cancel()
-			}
-
-			err = h.Generate(ctx)
-			if tc.hasError {
-				require.Error(t, err)
-
-				if tc.err != nil {
-					require.ErrorIs(t, err, tc.err)
+					defer cancel()
 				}
 
-				return
-			}
+				err = h.Generate(ctx)
+				if tc.hasError {
+					require.Error(t, err)
 
-			require.NoError(t, err)
-			require.FileExists(t, tc.outputFile)
+					if tc.err != nil {
+						require.ErrorIs(t, err, tc.err)
+					}
 
-			if tc.validateOutput != nil {
-				tc.validateOutput(t, tc.outputFile)
-			}
-		})
+					return
+				}
+
+				require.NoError(t, err)
+				require.FileExists(t, tc.outputFile)
+
+				if tc.validateOutput != nil {
+					tc.validateOutput(t, tc.outputFile)
+				}
+			},
+		)
 	}
 }

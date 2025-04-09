@@ -1,7 +1,6 @@
 package output_test
 
 import (
-	"context"
 	"os"
 	"testing"
 
@@ -16,7 +15,7 @@ func TestRender(t *testing.T) {
 	engine := html.NewEngine()
 	content := []byte("<p>test content</p>")
 
-	err := output.Render(context.Background(), content, engine, "/tmp/test.html")
+	err := output.Render(t.Context(), content, engine, "/tmp/test.html")
 
 	require.NoError(t, err)
 

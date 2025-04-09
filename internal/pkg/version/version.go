@@ -48,7 +48,7 @@ func New(major, minor, patch int) *Semantic {
 func Parse(version string) (*Semantic, error) {
 	matches := semverRE.FindStringSubmatch(version)
 
-	// nolint: mnd
+	//nolint:mnd
 	if len(matches) < 4 {
 		return nil, errInvalidVersion
 	}
@@ -132,11 +132,15 @@ func getLatestFromGithub(ctx context.Context) (string, error) {
 	}
 
 	req.Header.Set("Accept", "application/vnd.github+json")
-	req.Header.Set("X-GitHub-Api-Version", "2022-11-28") // nolint: canonicalheader
+	req.Header.Set("X-GitHub-Api-Version", "2022-11-28") //nolint:canonicalheader
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return "", errors.Join(errRequestFailed, err)
+	}
+
+	if resp == nil {
+		return "", fmt.Errorf("%w: invalid emty rsponse", errRequestFailed)
 	}
 
 	defer func() {

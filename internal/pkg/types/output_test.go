@@ -97,16 +97,18 @@ func TestDetectOutputType(t *testing.T) {
 		},
 	}
 	for _, tc := range tests {
-		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
+		t.Run(
+			tc.name, func(t *testing.T) {
+				t.Parallel()
 
-			got := tc.got()
+				got := tc.got()
 
-			require.Equal(t, tc.isValid, got.IsValid())
+				require.Equal(t, tc.isValid, got.IsValid())
 
-			if tc.isValid {
-				require.Equal(t, tc.want, got)
-			}
-		})
+				if tc.isValid {
+					require.Equal(t, tc.want, got)
+				}
+			},
+		)
 	}
 }

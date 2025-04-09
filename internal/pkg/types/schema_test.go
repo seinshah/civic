@@ -202,53 +202,55 @@ customSections: [{details: ["a"], header: ""}]`,
 	}
 
 	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
+		t.Run(
+			tc.name, func(t *testing.T) {
+				t.Parallel()
 
-			data, err := types.NewSchema([]byte(tc.content), types.SchemaTypeYaml)
+				data, err := types.NewSchema([]byte(tc.content), types.SchemaTypeYaml)
 
-			if tc.hasInitError {
-				require.Error(t, err)
-				require.Nil(t, data)
+				if tc.hasInitError {
+					require.Error(t, err)
+					require.Nil(t, data)
 
-				return
-			}
-
-			require.NoError(t, err)
-			require.NotEmpty(t, data)
-
-			err = data.IsValid()
-
-			if len(tc.failedValidationFields) > 0 {
-				require.Error(t, err)
-
-				ve := validator.ValidationErrors{}
-
-				require.ErrorAsf(t, err, &ve, "error is not of type ValidationErrors")
-
-				require.Len(t, ve, len(tc.failedValidationFields))
-
-				for _, field := range ve {
-					failedTag, failedFieldFound := tc.failedValidationFields[field.StructNamespace()]
-
-					require.Truef(
-						t, failedFieldFound,
-						"field %s not found in failed validation fields: %v",
-						field.StructNamespace(), ve,
-					)
-
-					require.Equalf(
-						t, failedTag, field.Tag(),
-						"field %s failed for %s instead of %s",
-						field.StructNamespace(), field.Tag(), failedTag,
-					)
+					return
 				}
 
-				return
-			}
+				require.NoError(t, err)
+				require.NotEmpty(t, data)
 
-			require.NoError(t, err)
-		})
+				err = data.IsValid()
+
+				if len(tc.failedValidationFields) > 0 {
+					require.Error(t, err)
+
+					ve := validator.ValidationErrors{}
+
+					require.ErrorAsf(t, err, &ve, "error is not of type ValidationErrors")
+
+					require.Len(t, ve, len(tc.failedValidationFields))
+
+					for _, field := range ve {
+						failedTag, failedFieldFound := tc.failedValidationFields[field.StructNamespace()]
+
+						require.Truef(
+							t, failedFieldFound,
+							"field %s not found in failed validation fields: %v",
+							field.StructNamespace(), ve,
+						)
+
+						require.Equalf(
+							t, failedTag, field.Tag(),
+							"field %s failed for %s instead of %s",
+							field.StructNamespace(), field.Tag(), failedTag,
+						)
+					}
+
+					return
+				}
+
+				require.NoError(t, err)
+			},
+		)
 	}
 }
 
@@ -327,56 +329,57 @@ func TestExampleSchema(t *testing.T) {
 	for i := range testCases {
 		tc := testCases[i]
 
-		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
+		t.Run(
+			tc.name, func(t *testing.T) {
+				t.Parallel()
 
-			keys := strings.Split(tc.key, ".")
+				keys := strings.Split(tc.key, ".")
 
-			var (
-				value        any
-				internalData map[string]any
-				ok           bool
-			)
+				var (
+					value        any
+					internalData map[string]any
+					ok           bool
+				)
 
-			//nolint:musttag
-			jsonData, errI := json.Marshal(data)
+				jsonData, errI := json.Marshal(data)
 
-			require.NoError(t, errI)
+				require.NoError(t, errI)
 
-			errI = json.Unmarshal(jsonData, &internalData)
+				errI = json.Unmarshal(jsonData, &internalData)
 
-			require.NoError(t, errI)
+				require.NoError(t, errI)
 
-			for index, key := range keys {
-				matches := re.FindStringSubmatch(key)
-				keyIndex := -1
+				for index, key := range keys {
+					matches := re.FindStringSubmatch(key)
+					keyIndex := -1
 
-				if len(matches) == 2 {
-					keyIndex, errI = strconv.Atoi(matches[1])
+					if len(matches) == 2 {
+						keyIndex, errI = strconv.Atoi(matches[1])
 
-					require.NoError(t, errI)
+						require.NoError(t, errI)
 
-					key = strings.ReplaceAll(key, matches[0], "")
-				}
-
-				if index == len(keys)-1 {
-					value = internalData[key]
-
-					if keyIndex != -1 {
-						value = internalData[key].([]any)[keyIndex]
+						key = strings.ReplaceAll(key, matches[0], "")
 					}
-				} else {
-					if keyIndex != -1 {
-						internalData, ok = internalData[key].([]any)[keyIndex].(map[string]any)
+
+					if index == len(keys)-1 {
+						value = internalData[key]
+
+						if keyIndex != -1 {
+							value = internalData[key].([]any)[keyIndex]
+						}
 					} else {
-						internalData, ok = internalData[key].(map[string]any)
+						if keyIndex != -1 {
+							internalData, ok = internalData[key].([]any)[keyIndex].(map[string]any)
+						} else {
+							internalData, ok = internalData[key].(map[string]any)
+						}
+
+						require.True(t, ok)
 					}
-
-					require.True(t, ok)
 				}
-			}
 
-			require.Truef(t, tc.validate(value), "valid value %v for key %s ", value, tc.key)
-		})
+				require.Truef(t, tc.validate(value), "valid value %v for key %s ", value, tc.key)
+			},
+		)
 	}
 }

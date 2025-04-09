@@ -72,9 +72,11 @@ func (h *Handler) Generate(ctx context.Context) error {
 
 	slog.Info("Successfully processed the CV schema file")
 
-	templateContent, err := h.parseTemplate(ctx, types.TemplateData{
-		Raw: confData,
-	})
+	templateContent, err := h.parseTemplate(
+		ctx, types.TemplateData{
+			Raw: confData,
+		},
+	)
 	if err != nil {
 		return err
 	}
@@ -96,7 +98,8 @@ func (h *Handler) Generate(ctx context.Context) error {
 }
 
 // getOutputGenerator returns the output generator based on the output type.
-// nolint:ireturn
+//
+//nolint:ireturn
 func (h *Handler) getOutputGenerator(confData *types.Schema) (types.OutputGenerator, error) {
 	var generator types.OutputGenerator
 

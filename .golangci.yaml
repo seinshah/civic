@@ -1,50 +1,53 @@
+version: "2"
 run:
+  go: "1.24"
   modules-download-mode: readonly
-  go: '1.24'
-output:
-  sort-results: true
-issues:
-  exclude-rules:
-    # Exclude some linters from running on tests files.
-    - path: _test\.go
-      linters:
-        - errcheck
-        - varnamelen
-        - goconst
-        - funlen
-        - forcetypeassert
-        - lll
-        - maintidx
-linters-settings:
-  varnamelen:
-    ignore-names:
-      - wg
-      - ok
-  gci:
-    sections:
-    - default
-    - standard
-    - blank
-    - dot
-severity:
-  default-severity: error
 linters:
-  presets:
-    - bugs
-    - error
-    - style
-    - unused
-    - complexity
-    - performance
-    - import
-    - module
-    - comment
-    - format
+  default: all
   disable:
-    # liners that are not needed
     - depguard
-    - wrapcheck
     - exhaustruct
-    - gochecknoglobals
-    - godox
-    - nolintlint
+    - wrapcheck
+  settings:
+    varnamelen:
+      ignore-type-assert-ok: true
+      ignore-map-index-ok: true
+      ignore-chan-recv-ok: true
+      ignore-names: [wg]
+    revive:
+      rules:
+      - name: package-comments
+        disabled: true
+    godox:
+      keywords: [FIXME, BUG]
+    ireturn:
+      allow: [anon, error, empty, stdlib, generic]
+  exclusions:
+    generated: strict
+    warn-unused: true
+    rules:
+      - path: _test\.go
+        linters:
+          - errcheck
+          - forcetypeassert
+          - funlen
+          - goconst
+          - lll
+          - maintidx
+          - gocyclo
+          - varnamelen
+formatters:
+  enable:
+    - gci
+    - gofmt
+    - gofumpt
+    - goimports
+  settings:
+    gci:
+      sections:
+        - default
+        - standard
+        - blank
+        - dot
+  exclusions:
+    generated: strict

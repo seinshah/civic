@@ -27,7 +27,7 @@ func TestRemoteLoader_Load(t *testing.T) {
 			getCtx: func(t *testing.T) (context.Context, context.CancelFunc) {
 				t.Helper()
 
-				return context.WithTimeout(context.Background(), 0)
+				return context.WithTimeout(t.Context(), 0)
 			},
 			expectError: expectError{
 				hasError: true,
@@ -45,38 +45,38 @@ func TestRemoteLoader_Load(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
+		t.Run(
+			tc.name, func(t *testing.T) {
+				t.Parallel()
 
-			l := loader.NewRemoteLoader(tc.path)
+				l := loader.NewRemoteLoader(tc.path)
 
-			var (
-				ctx    context.Context
-				cancel context.CancelFunc
-			)
+				var (
+					ctx    = t.Context()
+					cancel context.CancelFunc
+				)
 
-			if tc.getCtx != nil {
-				ctx, cancel = tc.getCtx(t)
+				if tc.getCtx != nil {
+					ctx, cancel = tc.getCtx(t)
 
-				defer cancel()
-			} else {
-				ctx = context.Background()
-			}
-
-			content, err := l.Load(ctx)
-
-			if tc.hasError {
-				require.Error(t, err)
-
-				if tc.err != nil {
-					require.ErrorIs(t, err, tc.err)
+					defer cancel()
 				}
 
-				return
-			}
+				content, err := l.Load(ctx)
 
-			require.NoError(t, err)
-			require.NotNil(t, content)
-		})
+				if tc.hasError {
+					require.Error(t, err)
+
+					if tc.err != nil {
+						require.ErrorIs(t, err, tc.err)
+					}
+
+					return
+				}
+
+				require.NoError(t, err)
+				require.NotNil(t, content)
+			},
+		)
 	}
 }

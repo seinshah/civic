@@ -45,6 +45,10 @@ func (r *RemoteLoader) Load(ctx context.Context) ([]byte, error) {
 		return nil, fmt.Errorf("%w: %s", errors.Join(ErrInvalidRemotePath, err), r.path)
 	}
 
+	if resp == nil {
+		return nil, fmt.Errorf("%w: invalid empty response", ErrInvalidRemotePath)
+	}
+
 	defer func() {
 		if errD := resp.Body.Close(); errD != nil {
 			slog.Warn("failed to close the response body", "error", errD, "path", r.path)

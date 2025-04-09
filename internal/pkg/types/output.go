@@ -23,7 +23,6 @@ type OutputGenerator interface {
 
 // DetectFileType detects the file type from the file path extension.
 // It casts the detected extension to the provided type.
-// nolint: ireturn
 func DetectFileType[C ~string](outputPath string) C {
 	ext := strings.Replace(filepath.Ext(outputPath), ".", "", 1)
 

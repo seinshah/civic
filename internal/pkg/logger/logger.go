@@ -14,6 +14,7 @@ type options struct {
 
 type Option func(*options)
 
+//nolint:gochecknoglobals
 var tintOptions *tint.Options
 
 func WithLevel(level slog.Level) Option {
@@ -29,7 +30,11 @@ func WithNoColor() Option {
 }
 
 func SetUp(opts ...Option) {
-	setTintOptions()
+	if tintOptions == nil {
+		tintOptions = &tint.Options{
+			Level: slog.LevelInfo,
+		}
+	}
 
 	if len(opts) == 0 {
 		setDefaultLogger()
@@ -54,16 +59,10 @@ func SetUp(opts ...Option) {
 	setDefaultLogger()
 }
 
-func setTintOptions() {
-	if tintOptions == nil {
-		tintOptions = &tint.Options{
-			Level: slog.LevelInfo,
-		}
-	}
-}
-
 func setDefaultLogger() {
-	slog.SetDefault(slog.New(
-		tint.NewHandler(os.Stderr, tintOptions),
-	))
+	slog.SetDefault(
+		slog.New(
+			tint.NewHandler(os.Stderr, tintOptions),
+		),
+	)
 }

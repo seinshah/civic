@@ -1,7 +1,6 @@
 package html_test
 
 import (
-	"context"
 	"testing"
 
 	"github.com/seinshah/civic/internal/pkg/output/html"
@@ -15,7 +14,7 @@ func TestEngine_Generate(t *testing.T) {
 
 	engine := html.NewEngine()
 
-	output, err := engine.Generate(context.Background(), content)
+	output, err := engine.Generate(t.Context(), content)
 
 	require.NoError(t, err)
 	require.Equal(t, content, output)

@@ -25,4 +25,7 @@ test:
 vulncheck: ## Check the code against recent vulnerabilities
 	@govulncheck ./...
 
+nilaway: ## Check nil pointer dereference issues
+	@nilaway ./...
+
 validate: generate lint vulncheck test

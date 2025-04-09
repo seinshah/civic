@@ -3,6 +3,7 @@ package schema_test
 import (
 	"context"
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/seinshah/civic/internal/pkg/types"
@@ -19,7 +20,7 @@ func TestHandler_Init(t *testing.T) {
 
 	testCases := []struct {
 		name       string
-		ctx        func() (context.Context, context.CancelFunc)
+		ctx        func(t *testing.T) (context.Context, context.CancelFunc)
 		outputPath string
 		hasError   bool
 		err        error
@@ -42,8 +43,10 @@ func TestHandler_Init(t *testing.T) {
 		{
 			name:       "error loading sample schema",
 			outputPath: os.TempDir() + "/test1.yaml",
-			ctx: func() (context.Context, context.CancelFunc) {
-				return context.WithTimeout(context.Background(), 0)
+			ctx: func(t *testing.T) (context.Context, context.CancelFunc) {
+				t.Helper()
+
+				return context.WithTimeout(t.Context(), 0)
 			},
 			hasError: true,
 			err:      context.DeadlineExceeded,
@@ -61,46 +64,48 @@ func TestHandler_Init(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
+		t.Run(
+			tc.name, func(t *testing.T) {
+				t.Parallel()
 
-			ctx := context.Background()
+				ctx := t.Context()
 
-			if tc.ctx != nil {
-				var cancel func()
+				if tc.ctx != nil {
+					var cancel func()
 
-				ctx, cancel = tc.ctx()
-				defer cancel()
-			}
-
-			err := h.Init(ctx, tc.outputPath)
-
-			expectedPath := tc.outputPath
-			if expectedPath == "" {
-				expectedPath = "./" + types.DefaultSchemaFileName
-			}
-
-			defer func() {
-				_ = os.Remove(expectedPath)
-			}()
-
-			if tc.hasError {
-				require.Error(t, err)
-
-				if tc.err != nil {
-					require.ErrorIs(t, err, tc.err)
+					ctx, cancel = tc.ctx(t)
+					defer cancel()
 				}
 
-				return
-			}
+				err := h.Init(ctx, tc.outputPath)
 
-			require.NoError(t, err)
+				expectedPath := tc.outputPath
+				if expectedPath == "" {
+					expectedPath = "./" + types.DefaultSchemaFileName
+				}
 
-			content, err := os.ReadFile(expectedPath)
+				defer func() {
+					_ = os.Remove(expectedPath)
+				}()
 
-			require.NoError(t, err)
-			require.NotEmpty(t, content)
-			require.Greater(t, len(content), 1)
-		})
+				if tc.hasError {
+					require.Error(t, err)
+
+					if tc.err != nil {
+						require.ErrorIs(t, err, tc.err)
+					}
+
+					return
+				}
+
+				require.NoError(t, err)
+
+				content, err := os.ReadFile(filepath.Clean(expectedPath))
+
+				require.NoError(t, err)
+				require.NotEmpty(t, content)
+				require.Greater(t, len(content), 1)
+			},
+		)
 	}
 }

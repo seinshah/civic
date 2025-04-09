@@ -1,7 +1,6 @@
 package loader_test
 
 import (
-	"context"
 	"os"
 	"testing"
 
@@ -71,6 +70,7 @@ func TestLocalLoader_Load(t *testing.T) {
 				require.NoError(t, err)
 
 				return f.Name(), func(t *testing.T) {
+					t.Helper()
 					errD := f.Close()
 
 					require.NoError(t, errD)
@@ -91,7 +91,7 @@ func TestLocalLoader_Load(t *testing.T) {
 			defer cleanup(t)
 
 			l := loader.NewLocalLoader(path)
-			content, err := l.Load(context.Background())
+			content, err := l.Load(t.Context())
 
 			if tc.hasError {
 				require.Error(t, err)

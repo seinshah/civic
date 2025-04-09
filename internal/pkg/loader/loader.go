@@ -45,7 +45,7 @@ func NewGeneralLoader(filePath string) (*GeneralLoader, error) {
 }
 
 func (l *GeneralLoader) Load(ctx context.Context) ([]byte, error) {
-	if l.loader == nil {
+	if l == nil || l.loader == nil {
 		return nil, ErrNoFileToLoad
 	}
 

@@ -14,6 +14,8 @@ import (
 // Version will be changed at build time using ldflags.
 // The new value will be determined in the CI pipeline
 // using the git tag.
+//
+//nolint:gochecknoglobals
 var Version = "latest"
 
 func main() {
