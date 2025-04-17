@@ -48,6 +48,10 @@ following formats:
 
 - YAML
 
+To help you identify required properties and follow the schema, configure
+your IDE or editor to consider [Civic's JSON Schema](https://raw.githubusercontent.com/seinshah/civic/refs/heads/main/civic-jsonschema.json)
+as the reference.
+
 ## Templates
 Templates are design you can use to render your CV into different formats.
 The following formats are supported:
@@ -63,3 +67,15 @@ support all the features of the recent app version, but it will still work
 If you like a design, but prefer a tiny change, you don't need to craft your
 own template. The schema file allows you to customize your chosen templates
 using simple CSS directives.
+
+## TODOs
+- [ ] Add CI pipeline for validating PRs and merges
+- [ ] Add CI pipeline for validating templates and creating examples
+- [ ] Add CD pipeline to deploy the binary to different registries on tagging
+- [ ] Add detailed documentation for users and template developers
+- [ ] Add GithubAction task
+- [ ] Add Civic's JSON schema to https://json-schema.org/
+- [ ] Enable users to convert PDF CVs to Civic's schema file
+- [ ] Enable users to convert their LinkedIn profile to Civic's schema file
+- [ ] Add custom parameters to templates
+- [ ] Add more templates
