@@ -13,10 +13,14 @@ install the latest version of the tool. Therefore, make sure your template
 matches this version.
 
 ```bash
-go install github.com/seinshah/civic@latest
+go install -ldflags "-X '/main.version=0.1'" github.com/seinshah/civic@latest
 ```
 
 ## Usage
+
+```bash
+civic -h
+```
 
 ```
 A tool to help maintaining and extending CVs or resumes

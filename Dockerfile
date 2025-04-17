@@ -30,7 +30,7 @@ RUN --mount=type=cache,id="go-build-cache-${TARGETOS}-${TARGETARCH}",sharing=pri
     --mount=type=cache,id="go-package-cache",sharing=shared,target=/go/pkg \
     CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build \
     -ldflags "-X '$APP_PACKAGE/main.version=$APP_VERSION' -extldflags '-static'" \
-    -o civic cmd/main.go
+    -o civic main.go
 
 FROM scratch AS production
 

@@ -5,6 +5,7 @@ LINTER := golangci-lint
 DOCKER := docker
 VULNCHECKER := govulncheck
 NILCHECKER := nilaway
+EXECUTABLE := ./main.go
 
 TARGET_RUNNER =
 
@@ -46,24 +47,24 @@ cmd-generate-cv: version := 0.1
 cmd-generate-cv: output :=
 cmd-generate-cv: schema :=
 cmd-generate-cv: ## generate cv with the provided schema to the provided output - args: output, schema
-	@$(TARGET_RUNNER) $(GO) run -ldflags "-X main.Version=$(version)" cmd/main.go generate -s $(schema) -o $(output)
+	@$(TARGET_RUNNER) $(GO) run -ldflags "-X main.Version=$(version)" $(EXECUTABLE) generate -s $(schema) -o $(output)
 
 .PHONY: cmd-json-schema
 cmd-json-schema: ## generate jsonschema of civic config file in the current directory
-	@$(TARGET_RUNNER) $(GO) run -ldflags "-X main.Version=$(version)" cmd/main.go schema json
+	@$(TARGET_RUNNER) $(GO) run -ldflags "-X main.Version=$(version)" $(EXECUTABLE) schema json
 
 .PHONY: cmd-init-schema
 cmd-init-schema: output :=
 cmd-init-schema: ## generate a civic schema template for you to build upon
-	@$(TARGET_RUNNER) $(GO) run -ldflags "-X main.Version=$(version)" cmd/main.go schema init -o $(output)
+	@$(TARGET_RUNNER) $(GO) run -ldflags "-X main.Version=$(version)" $(EXECUTABLE) schema init -o $(output)
 
 .PHONY: cmd-generate-template-example
 cmd-generate-template-example: version := 0
 cmd-generate-template-example: template :=
 cmd-generate-template-example: ## generate example html and pdf outputs for a given template in the given version
 	@$(TARGET_RUNNER) sed -E "/^template:/,/^[^[:space:]]/ s|^([[:space:]]*path:[[:space:]]*).*|\1./templates/$(template)/v$(version)/template.html|" ./examples/example.schema.yaml > /tmp/$(template)_sample_schema.yaml
-	@$(TARGET_RUNNER) $(GO) run -ldflags "-X main.Version=$(version)" cmd/main.go generate -s /tmp/$(template)_sample_schema.yaml -o ./templates/$(template)/v$(version)/example.html
-	@$(TARGET_RUNNER) $(GO) run -ldflags "-X main.Version=$(version)" cmd/main.go generate -s /tmp/$(template)_sample_schema.yaml -o ./templates/$(template)/v$(version)/example.pdf
+	@$(TARGET_RUNNER) $(GO) run -ldflags "-X main.Version=$(version)" $(EXECUTABLE) generate -s /tmp/$(template)_sample_schema.yaml -o ./templates/$(template)/v$(version)/example.html
+	@$(TARGET_RUNNER) $(GO) run -ldflags "-X main.Version=$(version)" $(EXECUTABLE) generate -s /tmp/$(template)_sample_schema.yaml -o ./templates/$(template)/v$(version)/example.pdf
 	@$(TARGET_RUNNER) rm -f /tmp/$(template)_sample_schema.yaml
 
 .PHONY: gomod
