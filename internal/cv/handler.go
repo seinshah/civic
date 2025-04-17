@@ -74,7 +74,7 @@ func (h *Handler) Generate(ctx context.Context) error {
 
 	templateContent, err := h.parseTemplate(
 		ctx, types.TemplateData{
-			Raw: confData,
+			Schema: confData,
 		},
 	)
 	if err != nil {

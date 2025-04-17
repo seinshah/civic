@@ -90,7 +90,7 @@ skills:
     - category: Backend
       items:
         - name: Go
-          description: "Proficient"
+          level: 5
 
 projects:
   header: "Projects2"

@@ -8,6 +8,7 @@ linters:
     - depguard
     - exhaustruct
     - wrapcheck
+    - exhaustive
   settings:
     varnamelen:
       ignore-type-assert-ok: true
@@ -22,6 +23,8 @@ linters:
       keywords: [FIXME, BUG]
     ireturn:
       allow: [anon, error, empty, stdlib, generic]
+    cyclop:
+      max-complexity: 20
   exclusions:
     generated: strict
     warn-unused: true

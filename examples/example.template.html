@@ -3,7 +3,7 @@
 
 <html lang="en-US">
     <head>
-        <title>{{.Raw.Bio.Name}} | {{.Raw.Bio.Title}}</title>
+        <title>{{.Schema.Bio.Name}} | {{.Schema.Bio.Title}}</title>
 
         <meta charset="utf-8" name="app-version" content="v0.1">
         <meta charset="utf-8" name="template-direction" content="LTR">
@@ -13,8 +13,8 @@
 
         <style>
             @page {
-                size: {{.Raw.Page.Size}};
-                margin: {{.Raw.Page.Margin.Top}} {{.Raw.Page.Margin.Right}} {{.Raw.Page.Margin.Bottom}} {{.Raw.Page.Margin.Left}};
+                size: {{.Schema.Page.Size}};
+                margin: {{.Schema.Page.Margin.Top}} {{.Schema.Page.Margin.Right}} {{.Schema.Page.Margin.Bottom}} {{.Schema.Page.Margin.Left}};
             }
 
             body {
@@ -27,10 +27,10 @@
 
     <body>
         <div>
-            <h1>{{.Raw.Bio.Name}}</h1>
-            <h2>{{.Raw.Bio.Title}}</h2>
+            <h1>{{.Schema.Bio.Name}}</h1>
+            <h2>{{.Schema.Bio.Title}}</h2>
 
-            {{with .Raw.Bio.Contact}}
+            {{with .Schema.Bio.Contact}}
             <ul>
                 {{with .Location}}
                 <li>Location: {{.}}</li>
@@ -54,11 +54,11 @@
             </ul>
             {{end}}
 
-            {{with .Raw.Bio.About}}
+            {{with .Schema.Bio.About}}
             <p>{{.}}</p>
             {{end}}
 
-            {{range .Raw.Bio.CustomData}}
+            {{range .Schema.Bio.CustomData}}
             <p>
                 {{with .Label}}
                 <strong>{{.}}:</strong>
@@ -70,7 +70,7 @@
 
         <hr />
 
-        {{with .Raw.WorkExperiences}}
+        {{with .Schema.WorkExperiences}}
         <div>
             <h2>{{.Header}}</h2>
             {{range .Entities}}
@@ -108,7 +108,7 @@
 
         <hr />
 
-        {{with .Raw.Educations}}
+        {{with .Schema.Educations}}
         <div>
             <h2>{{.Header}}</h2>
             {{range .Entities}}
@@ -146,7 +146,7 @@
 
         <hr />
 
-        {{with .Raw.Certificates}}
+        {{with .Schema.Certificates}}
         <div>
             <h2>{{.Header}}</h2>
             {{range .Entities}}
@@ -164,7 +164,7 @@
 
         <hr />
 
-        {{with .Raw.Publications}}
+        {{with .Schema.Publications}}
         <div>
             <h2>{{.Header}}</h2>
             {{range .Entities}}
@@ -191,7 +191,7 @@
 
         <hr />
 
-        {{with .Raw.Skills}}
+        {{with .Schema.Skills}}
         <div>
             <h2>{{.Header}}</h2>
             {{range .Entities}}
@@ -202,7 +202,7 @@
                 {{range .Items}}
                     <li>
                         {{.Name}}
-                        {{with .Description}}- {{.}}{{end}}
+                        {{with .Level}}- {{.}}{{end}}
                     </li>
                 {{end}}
                 </ul>
@@ -213,7 +213,7 @@
 
         <hr />
 
-        {{with .Raw.Projects}}
+        {{with .Schema.Projects}}
         <div>
             <h2>{{.Header}}</h2>
             {{range .Entities}}
@@ -234,7 +234,7 @@
         </div>
         {{end}}
 
-        {{with .Raw.CustomSections}}
+        {{with .Schema.CustomSections}}
         <hr />
 
         {{range .}}

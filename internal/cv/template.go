@@ -54,7 +54,10 @@ func (h *Handler) parseTemplate(ctx context.Context, config types.TemplateData) 
 		return nil, err
 	}
 
-	tpl, err := template.New(types.DefaultAppName).Funcs(sprig.FuncMap()).Parse(string(content))
+	funcs := sprig.FuncMap()
+	funcs["unescape"] = types.UnescapeHTML
+
+	tpl, err := template.New(types.DefaultAppName).Funcs(funcs).Parse(string(content))
 	if err != nil {
 		slog.Debug("", "template", string(content))
 
@@ -78,8 +81,8 @@ func (h *Handler) parseTemplate(ctx context.Context, config types.TemplateData) 
 		return nil, err
 	}
 
-	if err = customizeTemplate(cursor, config.Raw.Template.Customizer); err != nil {
-		slog.Warn("failed to register new node", "error", err, "customizer", config.Raw.Template.Customizer)
+	if err = customizeTemplate(cursor, config.Schema.Template.Customizer); err != nil {
+		slog.Warn("failed to register new node", "error", err, "customizer", config.Schema.Template.Customizer)
 	}
 
 	var output bytes.Buffer
@@ -92,15 +95,15 @@ func (h *Handler) parseTemplate(ctx context.Context, config types.TemplateData) 
 }
 
 func (h *Handler) getTemplateContent(ctx context.Context, config types.TemplateData) ([]byte, error) {
-	if config.Raw.Template.Path == "" && config.Raw.Template.Name == "" {
+	if config.Schema.Template.Path == "" && config.Schema.Template.Name == "" {
 		return nil, ErrTemplateNotProvided
 	}
 
 	var templatePath string
 
-	if config.Raw.Template.Path != "" {
-		templatePath = config.Raw.Template.Path
-	} else if config.Raw.Template.Name != "" {
+	if config.Schema.Template.Path != "" {
+		templatePath = config.Schema.Template.Path
+	} else if config.Schema.Template.Name != "" {
 		appV, err := version.Parse(h.appVersion)
 		if err != nil {
 			return nil, fmt.Errorf("invalid app version: %w", err)
@@ -109,7 +112,7 @@ func (h *Handler) getTemplateContent(ctx context.Context, config types.TemplateD
 		templatePath = fmt.Sprintf(
 			"%s/%s/v%d/template.html",
 			types.TemplateRegistryPath,
-			config.Raw.Template.Name,
+			config.Schema.Template.Name,
 			appV.Major(),
 		)
 	}
@@ -117,7 +120,7 @@ func (h *Handler) getTemplateContent(ctx context.Context, config types.TemplateD
 	templateLoader, err := loader.NewGeneralLoader(templatePath)
 	if err != nil {
 		if !errors.Is(err, loader.ErrInvalidPath) {
-			return nil, fmt.Errorf("failed to load template file (%s): %w", config.Raw.Template.Path, err)
+			return nil, fmt.Errorf("failed to load template file (%s): %w", config.Schema.Template.Path, err)
 		}
 	}
 

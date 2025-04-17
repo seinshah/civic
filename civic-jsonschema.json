@@ -41,6 +41,10 @@
           "type": "string",
           "description": "Title is the career title of the person."
         },
+        "profilePicture": {
+          "type": "string",
+          "description": "ProfilePicture is the link to your picture preferably in square size."
+        },
         "about": {
           "type": "string",
           "description": "About is a short description about the person."
@@ -154,10 +158,7 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "title",
-        "issuer",
-        "issueDate",
-        "expirationDate"
+        "title"
       ]
     },
     "SchemaCustomSection": {
@@ -408,9 +409,9 @@
           "type": "string",
           "description": "Name is the name of the skill."
         },
-        "description": {
-          "type": "string",
-          "description": "Description is any arbitrary detail of this skill. This might be interpreted\nin certain way by each template."
+        "level": {
+          "type": "integer",
+          "description": "Level is an optional gauge value between 1 and 5 to assess your\nproficiency in the given skill. 0 means no level is specified."
         }
       },
       "additionalProperties": false,

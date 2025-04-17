@@ -10,7 +10,7 @@ import (
 
 var ErrEmptySchemaPath = errors.New("schema file path is empty")
 
-//go:generate go-enum --names
+//go:generate go tool go-enum --names
 
 // SchemaType is the type of schema being used to generate the CV.
 // ENUM(yaml, yml).
@@ -80,6 +80,9 @@ type SchemaBio struct {
 
 	// Title is the career title of the person.
 	Title string `json:"title" validate:"required,min=2" yaml:"title"`
+
+	// ProfilePicture is the link to your picture preferably in square size.
+	ProfilePicture string `json:"profilePicture,omitempty" validate:"omitempty,url" yaml:"profilePicture"`
 
 	// About is a short description about the person.
 	About string `json:"about,omitempty" yaml:"about"`
@@ -205,9 +208,9 @@ type SchemaSkillsEntityItem struct {
 	// Name is the name of the skill.
 	Name string `json:"name" validate:"required" yaml:"name"`
 
-	// Description is any arbitrary detail of this skill. This might be interpreted
-	// in certain way by each template.
-	Description string `json:"description,omitempty" yaml:"description"`
+	// Level is an optional gauge value between 1 and 5 to assess your
+	// proficiency in the given skill. 0 means no level is specified.
+	Level uint8 `json:"level,omitempty" validate:"min=0,max=5" yaml:"level"`
 }
 
 type SchemaSkillsEntity struct {

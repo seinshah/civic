@@ -1,0 +1,574 @@
+{{/* gotype: github.com/seinshah/civic/internal/pkg/types.TemplateData */}}
+<!DOCTYPE html>
+
+<html lang="en-US">
+<head>
+    <title>{{.Schema.Bio.Name}} | {{.Schema.Bio.Title}}</title>
+
+    <meta charset="utf-8" name="app-version" content="v0.1">
+    <meta charset="utf-8" name="template-direction" content="LTR">
+
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"/>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+        @page {
+            size: {{.Schema.Page.Size}};
+            margin: {{.Schema.Page.Margin.Top}}in {{.Schema.Page.Margin.Right}}in {{.Schema.Page.Margin.Bottom}}in {{.Schema.Page.Margin.Left}}in;
+        }
+
+        :root {
+            --bg-color: #c5cec5;
+            --main-text-color: #333332;
+            --secondary-text-color: #7b8d7b;
+            --default-font-size: 11pt;
+        }
+
+        body {
+            font-family: "Roboto", sans-serif;
+            font-optical-sizing: auto;
+            font-size: var(--default-font-size);
+            background-color: var(--bg-color);
+            color: var(--main-text-color);
+            width: {{.Schema.Page.Size.GetWidthInch}}in;
+            margin: 0 auto;
+        }
+
+        a {
+            color: var(--main-text-color);
+            text-decoration: none;
+            border-bottom: 1pt dotted;
+        }
+
+        a::after {
+            content: "↗";
+            font-size: 50%;
+            margin-left: 0.1pt;
+            vertical-align: super;
+        }
+
+        header, section {
+            padding: 5pt;
+        }
+
+        .bio {
+            display: flex;
+            align-items: center;
+        }
+
+        .bio > img {
+            width: 100pt;
+            border-radius: 50%;
+        }
+
+        .bio .name {
+            font-size: 200%;
+            margin: 0;
+        }
+
+        .bio .title {
+            font-size: 130%;
+            margin: 5pt;
+            color: var(--secondary-text-color);
+        }
+
+        .bio .contact {
+            margin-left: auto;
+        }
+
+        .bio .contact ul {
+            list-style: none;
+            margin: 0 3pt 0 2pt;
+            padding: 0;
+        }
+
+        .bio .contact ul li {
+            line-height: 150%;
+        }
+
+        .bio .contact ul li i {
+            margin-right: 1pt;
+        }
+
+        .about {
+            display: block;
+            margin: 10pt 0 0 0;
+            line-height: 150%;
+            text-align: justify;
+            border-left: 3pt solid var(--secondary-text-color);
+            padding-left: 5pt;
+        }
+
+        section > h2 {
+            font-size: 160%;
+            color: var(--secondary-text-color);
+            margin: 10pt 0;
+            border-top: 3pt solid;
+            border-image: linear-gradient(to right, transparent, var(--secondary-text-color), transparent) 1;
+        }
+
+         .timeline {
+            border-left: 3pt solid var(--secondary-text-color);
+            position: relative;
+        }
+
+         .timeline .timeline-item {
+            position: relative;
+             padding-top: 15pt;
+         }
+
+        .timeline .timeline-item::before{
+            content: "➤";
+            font-size: 15pt;
+            color: var(--secondary-text-color);
+            line-height: 0;
+            position: absolute;
+            left: -3pt;
+            top: 28pt;
+        }
+
+        .timeline .timeline-item .timeline-header {
+            display: flex;
+            align-items: center;
+        }
+
+        .timeline .timeline-item .entity-main-title {
+            margin: 5pt 0 1pt 13pt;
+            font-size: 130%;
+            position: relative;
+        }
+
+        .timeline .timeline-item .entity-subtitle {
+            margin: 1pt 0 5pt 20pt;
+            font-size: 100%;
+            color: var(--secondary-text-color);
+        }
+
+        .timeline .timeline-item .entity-metadata {
+            margin-left: auto;
+        }
+
+        .timeline .timeline-item .entity-metadata > p {
+            margin: 3pt 0;
+            color: var(--secondary-text-color);
+            font-size: 85%;
+        }
+
+        .timeline .timeline-item .entity-metadata > p i {
+            margin-right: 2pt;
+        }
+
+        .timeline .timeline-item ul.timeline-details {
+            margin: 5pt 0;
+            line-height: 130%;
+            padding: 0px 20pt;
+        }
+
+        .timeline .timeline-item ul.timeline-details > li {
+            margin-top: 5pt;
+        }
+
+        .timeline .timeline-item .technologies {
+            background-color: var(--secondary-text-color);
+            padding: 2pt 0;
+            margin-top: 15pt;
+        }
+
+        .timeline .timeline-item .technologies > span {
+            padding: 3pt;
+            margin: 1.5pt;
+            background-color: var(--bg-color);
+            color: var(--main-text-color);
+            font-size: 80%;
+            display: inline-block;
+        }
+
+        .custom-section {}
+
+        .custom-section .note {
+            line-height: 160%;
+        }
+
+        .custom-section ul.list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .custom-section ul.list > li {
+            position: relative;
+            padding-left: 15pt;
+            margin-top: 10pt;
+        }
+
+        .custom-section ul.list > li::before {
+            content: "\f152";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            top: 1px;
+            color: var(--secondary-text-color);
+        }
+
+        .skills {
+            display: flex;
+            align-items: stretch;
+            flex-wrap: wrap;
+        }
+
+        .skills .category {
+            flex-grow: 4;
+            margin: 5pt;
+            padding: 5pt;
+            border: 1px solid var(--secondary-text-color);
+            max-width: 46%;
+        }
+
+        .skills .category > h3 {
+            font-size: 120%;
+            margin: 0;
+        }
+
+        .skills .category > p > span {
+            padding: 3pt;
+            margin: 1.5pt;
+            border: 1px solid var(--secondary-text-color);
+            color: var(--main-text-color);
+            font-size: 90%;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        .skills .category > p > span.skill-level-1 {
+            font-weight: 300;
+            opacity: 55%;
+            border-style: dotted;
+        }
+
+        .skills .category > p > span.skill-level-2 {
+            font-weight: 400;
+            opacity: 65%;
+            border-style: dotted;
+        }
+
+        .skills .category > p > span.skill-level-3 {
+            font-weight: 500;
+            opacity: 75%;
+            border-style: dashed;
+        }
+
+        .skills .category > p > span.skill-level-4 {
+            font-weight: 600;
+            opacity: 85%;
+            border-style: dashed;
+        }
+    </style>
+
+    {{/* Customizer CSS code provided by the configuration file will be added here automatically  */}}
+</head>
+
+<body>
+<header>
+    <div class="bio">
+        {{if .Schema.Bio.ProfilePicture}}
+        <img alt="{{.Schema.Bio.Name}}" src="{{.Schema.Bio.ProfilePicture}}"/>
+        {{end}}
+
+        <div>
+            <h1 class="name">{{.Schema.Bio.Name}}</h1>
+            <h2 class="title">{{.Schema.Bio.Title}}</h2>
+        </div>
+
+        {{with .Schema.Bio.Contact}}
+            <div class="contact">
+                <ul>
+                    {{with .Location}}
+                        <li>
+                            <i class="fa-regular fa-compass"></i>
+                            {{.}}
+                        </li>
+                    {{end}}
+
+                    {{with .Website}}
+                        <li>
+                            <i class="fa-brands fa-wordpress-simple"></i>
+                            <a href="{{.}}" target="_blank">{{.}}</a>
+                        </li>
+                    {{end}}
+
+                    {{with .Email}}
+                        <li>
+                            <i class="fa-regular fa-envelope"></i>
+                            {{.}}
+                        </li>
+                    {{end}}
+
+                    {{with .Phone}}
+                        <li>{{.}}</li>
+                    {{end}}
+
+                    {{range .ParsedSocials}}
+                        <li>
+                            {{ if ne .Name "other" }}
+                            <i class="fa-brands fa-{{.Name}}"></i>
+                            {{ end }}
+
+                            <a href="{{.Link}}" target="_blank">{{.DetectedUsername}}</a>
+                        </li>
+                    {{end}}
+                </ul>
+            </div>
+        {{end}}
+    </div>
+
+    {{with .Schema.Bio.About}}
+    <p class="about">{{.}}</p>
+    {{end}}
+
+    {{range .Schema.Bio.CustomData}}
+        <p>
+            {{with .Label}}
+                <strong>{{.}}:</strong>
+            {{end}}
+            {{.Value}}
+        </p>
+    {{end}}
+</header>
+
+{{with .Schema.WorkExperiences}}
+    <section>
+        <h2>{{.Header}}</h2>
+
+        <div class="timeline">
+            {{range .Entities}}
+                <div class="timeline-item">
+                    <div class="timeline-header">
+                        <div>
+                            <h3 class="entity-main-title">{{.Title}}</h3>
+                            <h4 class="entity-subtitle">{{.Company}}</h4>
+                        </div>
+
+                        <div class="entity-metadata">
+                            {{with .Location}}
+                            <p>
+                                <i class="fa-regular fa-compass"></i>
+                                {{.}}
+                            </p>
+                            {{end}}
+
+                            <p>
+                                <i class="fa-regular fa-calendar"></i>
+                                {{.StartDate}} - {{.EndDate}}
+                            </p>
+                        </div>
+                    </div>
+
+                    <ul class="timeline-details">
+                        {{range .Details}}
+                            <li>{{unescape .}}</li>
+                        {{end}}
+                    </ul>
+
+                    {{with .Technologies}}
+                        <div class="technologies">
+                            {{range .}}
+                                <span>{{.}}</span>
+                            {{end}}
+                        </div>
+                    {{end}}
+                </div>
+            {{end}}
+        </div>
+    </section>
+{{end}}
+
+{{with .Schema.Educations}}
+    <section>
+        <h2>{{.Header}}</h2>
+
+        <div class="timeline">
+            {{range .Entities}}
+                <div class="timeline-item">
+                    <div class="timeline-header">
+                        <div>
+                            <h3 class="entity-main-title">{{.Degree}} | {{.Field}}</h3>
+                            <h4 class="entity-subtitle">{{.University}}</h4>
+                        </div>
+
+                        <div class="entity-metadata">
+                            {{with .Location}}
+                                <p>
+                                    <i class="fa-regular fa-compass"></i>
+                                    {{.}}
+                                </p>
+                            {{end}}
+
+                            <p>
+                                <i class="fa-regular fa-calendar"></i>
+                                {{.StartDate}} - {{.EndDate}}
+                            </p>
+                        </div>
+                    </div>
+
+                    <ul class="timeline-details">
+                        {{range .Details}}
+                            <li>{{unescape .}}</li>
+                        {{end}}
+                    </ul>
+
+                    {{with .Technologies}}
+                        <div class="technologies">
+                            {{range .}}
+                                <span>{{.}}</span>
+                            {{end}}
+                        </div>
+                    {{end}}
+                </div>
+            {{end}}
+        </div>
+    </section>
+{{end}}
+
+{{with .Schema.Certificates}}
+    <section>
+        <h2>{{.Header}}</h2>
+
+        <div class="timeline">
+            {{range .Entities}}
+                <div class="timeline-item">
+                    <div class="timeline-header">
+                        <div>
+                            <h3 class="entity-main-title">{{.Title}}</h3>
+                            <h4 class="entity-subtitle">{{.Issuer}}</h4>
+                        </div>
+
+                        <div class="entity-metadata">
+                            <p>
+                                <i class="fa-regular fa-calendar"></i>
+                                {{.IssueDate}}
+                                {{with .ExpirationDate}} - {{.}} {{end}}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {{end}}
+        </div>
+    </section>
+{{end}}
+
+{{with .Schema.Publications}}
+    <section>
+        <h2>{{.Header}}</h2>
+
+        <div class="timeline">
+            {{range .Entities}}
+                <div class="timeline-item">
+                    <div class="timeline-header">
+                        <div>
+                            <h3 class="entity-main-title">{{.Title}}</h3>
+                            <h4 class="entity-subtitle">{{.Publisher}}</h4>
+                        </div>
+
+                        <div class="entity-metadata">
+                            <p>
+                                <i class="fa-regular fa-calendar"></i>
+                                {{.PublishDate}}
+                            </p>
+                            <p>
+                                <i class="fa-solid fa-link"></i>
+                                <a href="{{.Link}}" target="_blank">Visit</a>
+                            </p>
+                        </div>
+                    </div>
+
+                    {{with .Details}}
+                        <ul class="timeline-details">
+                            {{range .}}
+                                <li>{{unescape .}}</li>
+                            {{end}}
+                        </ul>
+                    {{end}}
+                </div>
+            {{end}}
+        </div>
+    </section>
+{{end}}
+
+{{with .Schema.Skills}}
+    <section>
+        <h2>{{.Header}}</h2>
+
+        <div class="skills">
+            {{range .Entities}}
+            <div class="category">
+                <h3>{{.Category}}</h3>
+
+                <p>
+                    {{range .Items}}
+                        <span {{with .Level}}class="skill-level-{{.}}"{{end}}>
+                            {{.Name}}
+                        </span>
+                    {{end}}
+                </p>
+            </div>
+            {{end}}
+        </div>
+    </section>
+{{end}}
+
+{{with .Schema.Projects}}
+    <section>
+        <h2>{{.Header}}</h2>
+
+        <div class="timeline">
+            {{range .Entities}}
+                <div class="timeline-item">
+                    <div class="timeline-header">
+                        <div>
+                            <h3 class="entity-main-title">{{.Title}}</h3>
+                        </div>
+
+                        <div class="entity-metadata">
+                            <p>
+                                <i class="fa-solid fa-link"></i>
+                                <a href="{{.Link}}" target="_blank">Visit</a>
+                            </p>
+                        </div>
+                    </div>
+
+                    {{with .Details}}
+                        <ul class="timeline-details">
+                            {{range .}}
+                                <li>{{unescape .}}</li>
+                            {{end}}
+                        </ul>
+                    {{end}}
+                </div>
+            {{end}}
+        </div>
+    </section>
+{{end}}
+
+{{with .Schema.CustomSections}}
+    {{range .}}
+        <section>
+            <h2>{{.Header}}</h2>
+
+            <div class="custom-section">
+                {{if len .Details | eq 1}}
+                    <p class="note">{{index .Details 0}}</p>
+                {{else}}
+                    <ul class="list">
+                        {{range .Details}}
+                            <li>{{unescape .}}</li>
+                        {{end}}
+                    </ul>
+                {{end}}
+            </div>
+        </section>
+    {{end}}
+{{end}}
+</body>
+</html>

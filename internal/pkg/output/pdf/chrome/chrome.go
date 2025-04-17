@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"sync"
+	"time"
 
 	"github.com/chromedp/cdproto/page"
 	"github.com/chromedp/chromedp"
@@ -67,6 +68,26 @@ func (h *Headless) Generate(ctx context.Context, content []byte) ([]byte, error)
 	printTask := chromedp.Tasks{
 		chromedp.Navigate("about:blank"),
 		chromedp.ActionFunc(h.getLoadContentAction(string(content))),
+		// Wait for the page to be fully loaded
+		chromedp.WaitReady("body", chromedp.ByQuery),
+		// Wait for all stylesheets to be loaded
+		chromedp.ActionFunc(
+			func(ctx context.Context) error {
+				jsPoll := `
+					Array.from(document.querySelectorAll('link[rel="stylesheet"]'))
+						.every(link => link.sheet || link.onload === null)
+				`
+
+				return chromedp.Poll(
+					jsPoll,
+					nil,
+					chromedp.WithPollingInterval(500*time.Millisecond), //nolint:mnd
+					chromedp.WithPollingTimeout(10*time.Second),        //nolint:mnd
+				).Do(ctx)
+			},
+		),
+		// Give a tiny extra buffer for layout/paint
+		chromedp.Sleep(500 * time.Millisecond), //nolint:mnd
 		chromedp.ActionFunc(h.getPrintToPDFAction(&result)),
 	}
 

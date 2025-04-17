@@ -1,0 +1,611 @@
+<!DOCTYPE html><html lang="en-US"><head>
+    <title>Hossein Shahsahebi | Backend Lead Engineer</title>
+
+    <meta charset="utf-8" name="app-version" content="v0.1"/>
+    <meta charset="utf-8" name="template-direction" content="LTR"/>
+
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"/>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+        @page {
+            size: A4;
+            margin: 0.1in 0.1in 0.1in 0.1in;
+        }
+
+        :root {
+            --bg-color: #c5cec5;
+            --main-text-color: #333332;
+            --secondary-text-color: #7b8d7b;
+            --default-font-size: 11pt;
+        }
+
+        body {
+            font-family: "Roboto", sans-serif;
+            font-optical-sizing: auto;
+            font-size: var(--default-font-size);
+            background-color: var(--bg-color);
+            color: var(--main-text-color);
+            width: 8.27in;
+            margin: 0 auto;
+        }
+
+        a {
+            color: var(--main-text-color);
+            text-decoration: none;
+            border-bottom: 1pt dotted;
+        }
+
+        a::after {
+            content: "↗";
+            font-size: 50%;
+            margin-left: 0.1pt;
+            vertical-align: super;
+        }
+
+        header, section {
+            padding: 5pt;
+        }
+
+        .bio {
+            display: flex;
+            align-items: center;
+        }
+
+        .bio > img {
+            width: 100pt;
+            border-radius: 50%;
+        }
+
+        .bio .name {
+            font-size: 200%;
+            margin: 0;
+        }
+
+        .bio .title {
+            font-size: 130%;
+            margin: 5pt;
+            color: var(--secondary-text-color);
+        }
+
+        .bio .contact {
+            margin-left: auto;
+        }
+
+        .bio .contact ul {
+            list-style: none;
+            margin: 0 3pt 0 2pt;
+            padding: 0;
+        }
+
+        .bio .contact ul li {
+            line-height: 150%;
+        }
+
+        .bio .contact ul li i {
+            margin-right: 1pt;
+        }
+
+        .about {
+            display: block;
+            margin: 10pt 0 0 0;
+            line-height: 150%;
+            text-align: justify;
+            border-left: 3pt solid var(--secondary-text-color);
+            padding-left: 5pt;
+        }
+
+        section > h2 {
+            font-size: 160%;
+            color: var(--secondary-text-color);
+            margin: 10pt 0;
+            border-top: 3pt solid;
+            border-image: linear-gradient(to right, transparent, var(--secondary-text-color), transparent) 1;
+        }
+
+         .timeline {
+            border-left: 3pt solid var(--secondary-text-color);
+            position: relative;
+        }
+
+         .timeline .timeline-item {
+            position: relative;
+             padding-top: 15pt;
+         }
+
+        .timeline .timeline-item::before{
+            content: "➤";
+            font-size: 15pt;
+            color: var(--secondary-text-color);
+            line-height: 0;
+            position: absolute;
+            left: -3pt;
+            top: 28pt;
+        }
+
+        .timeline .timeline-item .timeline-header {
+            display: flex;
+            align-items: center;
+        }
+
+        .timeline .timeline-item .entity-main-title {
+            margin: 5pt 0 1pt 13pt;
+            font-size: 130%;
+            position: relative;
+        }
+
+        .timeline .timeline-item .entity-subtitle {
+            margin: 1pt 0 5pt 20pt;
+            font-size: 100%;
+            color: var(--secondary-text-color);
+        }
+
+        .timeline .timeline-item .entity-metadata {
+            margin-left: auto;
+        }
+
+        .timeline .timeline-item .entity-metadata > p {
+            margin: 3pt 0;
+            color: var(--secondary-text-color);
+            font-size: 85%;
+        }
+
+        .timeline .timeline-item .entity-metadata > p i {
+            margin-right: 2pt;
+        }
+
+        .timeline .timeline-item ul.timeline-details {
+            margin: 5pt 0;
+            line-height: 130%;
+            padding: 0px 20pt;
+        }
+
+        .timeline .timeline-item ul.timeline-details > li {
+            margin-top: 5pt;
+        }
+
+        .timeline .timeline-item .technologies {
+            background-color: var(--secondary-text-color);
+            padding: 2pt 0;
+            margin-top: 15pt;
+        }
+
+        .timeline .timeline-item .technologies > span {
+            padding: 3pt;
+            margin: 1.5pt;
+            background-color: var(--bg-color);
+            color: var(--main-text-color);
+            font-size: 80%;
+            display: inline-block;
+        }
+
+        .custom-section {}
+
+        .custom-section .note {
+            line-height: 160%;
+        }
+
+        .custom-section ul.list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .custom-section ul.list > li {
+            position: relative;
+            padding-left: 15pt;
+            margin-top: 10pt;
+        }
+
+        .custom-section ul.list > li::before {
+            content: "\f152";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            top: 1px;
+            color: var(--secondary-text-color);
+        }
+
+        .skills {
+            display: flex;
+            align-items: stretch;
+            flex-wrap: wrap;
+        }
+
+        .skills .category {
+            flex-grow: 4;
+            margin: 5pt;
+            padding: 5pt;
+            border: 1px solid var(--secondary-text-color);
+            max-width: 46%;
+        }
+
+        .skills .category > h3 {
+            font-size: 120%;
+            margin: 0;
+        }
+
+        .skills .category > p > span {
+            padding: 3pt;
+            margin: 1.5pt;
+            border: 1px solid var(--secondary-text-color);
+            color: var(--main-text-color);
+            font-size: 90%;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        .skills .category > p > span.skill-level-1 {
+            font-weight: 300;
+            opacity: 55%;
+            border-style: dotted;
+        }
+
+        .skills .category > p > span.skill-level-2 {
+            font-weight: 400;
+            opacity: 65%;
+            border-style: dotted;
+        }
+
+        .skills .category > p > span.skill-level-3 {
+            font-weight: 500;
+            opacity: 75%;
+            border-style: dashed;
+        }
+
+        .skills .category > p > span.skill-level-4 {
+            font-weight: 600;
+            opacity: 85%;
+            border-style: dashed;
+        }
+    </style>
+
+    
+</head>
+
+<body>
+<header>
+    <div class="bio">
+        
+
+        <div>
+            <h1 class="name">Hossein Shahsahebi</h1>
+            <h2 class="title">Backend Lead Engineer</h2>
+        </div>
+
+        
+            <div class="contact">
+                <ul>
+                    
+                        <li>
+                            <i class="fa-regular fa-compass"></i>
+                            City, Country
+                        </li>
+                    
+
+                    
+                        <li>
+                            <i class="fa-brands fa-wordpress-simple"></i>
+                            <a href="https://example.com" target="_blank">https://example.com</a>
+                        </li>
+                    
+
+                    
+                        <li>
+                            <i class="fa-regular fa-envelope"></i>
+                            me@example.com
+                        </li>
+                    
+
+                    
+                        <li>+1 123 456 7890</li>
+                    
+
+                    
+                        <li>
+                            
+                            <i class="fa-brands fa-linkedin"></i>
+                            
+
+                            <a href="https://linkedin.com/in/username/" target="_blank">in/username</a>
+                        </li>
+                    
+                        <li>
+                            
+                            <i class="fa-brands fa-github"></i>
+                            
+
+                            <a href="https://github.com/username" target="_blank">username</a>
+                        </li>
+                    
+                </ul>
+            </div>
+        
+    </div>
+
+    
+    <p class="about">Solution-driven and passionate senior software engineer with more than 7 years of
+experience designing, architect, and developing high-load and well-designed server-side
+application across different industries using modern tools and technologies.
+</p>
+    
+
+    
+        <p>
+            
+                <strong>Notice Period:</strong>
+            
+            3 Months
+        </p>
+    
+</header>
+
+
+    <section>
+        <h2>Work Experiences2</h2>
+
+        <div class="timeline">
+            
+                <div class="timeline-item">
+                    <div class="timeline-header">
+                        <div>
+                            <h3 class="entity-main-title">Backend Lead Engineer</h3>
+                            <h4 class="entity-subtitle">Alphabet Inc.</h4>
+                        </div>
+
+                        <div class="entity-metadata">
+                            
+                            <p>
+                                <i class="fa-regular fa-compass"></i>
+                                Mountain View, CA
+                            </p>
+                            
+
+                            <p>
+                                <i class="fa-regular fa-calendar"></i>
+                                07/2021 - present
+                            </p>
+                        </div>
+                    </div>
+
+                    <ul class="timeline-details">
+                        
+                            <li>Lead a team of 5 backend engineers</li>
+                        
+                            <li>Design and develop a microservice-based system</li>
+                        
+                            <li>Implement CI/CD pipeline</li>
+                        
+                            <li>Conduct code reviews and pair programming</li>
+                        
+                            <li>Mentor junior engineers</li>
+                        
+                    </ul>
+
+                    
+                        <div class="technologies">
+                            
+                                <span>Go</span>
+                            
+                                <span>Kubernetes</span>
+                            
+                                <span>Docker</span>
+                            
+                        </div>
+                    
+                </div>
+            
+        </div>
+    </section>
+
+
+
+    <section>
+        <h2>Educations2</h2>
+
+        <div class="timeline">
+            
+                <div class="timeline-item">
+                    <div class="timeline-header">
+                        <div>
+                            <h3 class="entity-main-title">Master of Science (MSc) | Computer Science</h3>
+                            <h4 class="entity-subtitle">University of Tehran</h4>
+                        </div>
+
+                        <div class="entity-metadata">
+                            
+                                <p>
+                                    <i class="fa-regular fa-compass"></i>
+                                    Tehran, Iran
+                                </p>
+                            
+
+                            <p>
+                                <i class="fa-regular fa-calendar"></i>
+                                09/2014 - 09/2016
+                            </p>
+                        </div>
+                    </div>
+
+                    <ul class="timeline-details">
+                        
+                            <li>Thesis: A Novel Approach for Detecting and Preventing SQL Injection Attacks</li>
+                        
+                            <li>GPA: 3.8/4.0</li>
+                        
+                            <li>Courses: Advanced Database, Data Mining, and Machine Learning</li>
+                        
+                    </ul>
+
+                    
+                        <div class="technologies">
+                            
+                                <span>Java</span>
+                            
+                                <span>Python</span>
+                            
+                        </div>
+                    
+                </div>
+            
+        </div>
+    </section>
+
+
+
+    <section>
+        <h2>Certificates2</h2>
+
+        <div class="timeline">
+            
+                <div class="timeline-item">
+                    <div class="timeline-header">
+                        <div>
+                            <h3 class="entity-main-title">Certified Kubernetes Administrator (CKA)</h3>
+                            <h4 class="entity-subtitle">Cloud Native Computing Foundation</h4>
+                        </div>
+
+                        <div class="entity-metadata">
+                            <p>
+                                <i class="fa-regular fa-calendar"></i>
+                                07/2021
+                                 - 07/2024 
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            
+        </div>
+    </section>
+
+
+
+    <section>
+        <h2>Publications2</h2>
+
+        <div class="timeline">
+            
+                <div class="timeline-item">
+                    <div class="timeline-header">
+                        <div>
+                            <h3 class="entity-main-title">A Novel Approach for Detecting and Preventing SQL Injection Attacks</h3>
+                            <h4 class="entity-subtitle">IEEE</h4>
+                        </div>
+
+                        <div class="entity-metadata">
+                            <p>
+                                <i class="fa-regular fa-calendar"></i>
+                                09/2016
+                            </p>
+                            <p>
+                                <i class="fa-solid fa-link"></i>
+                                <a href="https://ieeexplore.ieee.org/document/1234567" target="_blank">Visit</a>
+                            </p>
+                        </div>
+                    </div>
+
+                    
+                        <ul class="timeline-details">
+                            
+                                <li>This paper presents a novel approach for detecting and preventing SQL injection attacks using
+a combination of static and dynamic analysis.
+</li>
+                            
+                        </ul>
+                    
+                </div>
+            
+        </div>
+    </section>
+
+
+
+    <section>
+        <h2>Skills</h2>
+
+        <div class="skills">
+            
+            <div class="category">
+                <h3>Backend</h3>
+
+                <p>
+                    
+                        <span class="skill-level-5">
+                            Go
+                        </span>
+                    
+                </p>
+            </div>
+            
+        </div>
+    </section>
+
+
+
+    <section>
+        <h2>Projects2</h2>
+
+        <div class="timeline">
+            
+                <div class="timeline-item">
+                    <div class="timeline-header">
+                        <div>
+                            <h3 class="entity-main-title">Argo CD</h3>
+                        </div>
+
+                        <div class="entity-metadata">
+                            <p>
+                                <i class="fa-solid fa-link"></i>
+                                <a href="https://argoproj.io" target="_blank">Visit</a>
+                            </p>
+                        </div>
+                    </div>
+
+                    
+                        <ul class="timeline-details">
+                            
+                                <li>Argo CD is a declarative, GitOps continuous delivery tool for Kubernetes.</li>
+                            
+                        </ul>
+                    
+                </div>
+            
+        </div>
+    </section>
+
+
+
+    
+        <section>
+            <h2>Languages</h2>
+
+            <div class="custom-section">
+                
+                    <p class="note">some non formatted information</p>
+                
+            </div>
+        </section>
+    
+        <section>
+            <h2>Hobbies</h2>
+
+            <div class="custom-section">
+                
+                    <ul class="list">
+                        
+                            <li>something about hobby 1</li>
+                        
+                            <li>something about hobby 2</li>
+                        
+                            <li>something about hobby 3</li>
+                        
+                    </ul>
+                
+            </div>
+        </section>
+    
+
+
+
+</body></html>

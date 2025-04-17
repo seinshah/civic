@@ -2,7 +2,7 @@ package types
 
 import "errors"
 
-//go:generate go-enum --nocase --names
+//go:generate go tool go-enum --nocase --names
 
 var ErrInvalidPageMargin = errors.New("invalid page margin")
 
