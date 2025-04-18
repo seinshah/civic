@@ -16,7 +16,7 @@ import (
 // using the git tag.
 //
 //nolint:gochecknoglobals
-var Version = "latest"
+var Version = "0.1.0-dev"
 
 func main() {
 	logger.SetUp()

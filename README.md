@@ -13,7 +13,7 @@ install the latest version of the tool. Therefore, make sure your template
 matches this version.
 
 ```bash
-go install -ldflags "-X '/main.version=0.1'" github.com/seinshah/civic@latest
+go install github.com/seinshah/civic@latest
 ```
 
 ## Usage
