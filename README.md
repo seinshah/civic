@@ -1,4 +1,4 @@
-# Civic - CV as a Code
+# Civic - CV as a Configuration
 
 Maintaining a CV should not be a hassle. Civic is here to make sure of that.
 It splits your CV into its content and its design to help you change each
@@ -82,4 +82,6 @@ using simple CSS directives.
 - [ ] Enable users to convert PDF CVs to Civic's schema file
 - [ ] Enable users to convert their LinkedIn profile to Civic's schema file
 - [ ] Add custom parameters to templates
+- [ ] Enable Hooks
+- [ ] Support [pkl-lang](https://pkl-lang.org/)
 - [ ] Add more templates

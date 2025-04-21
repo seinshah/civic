@@ -324,7 +324,7 @@
     </div>
 
     {{with .Schema.Bio.About}}
-    <p class="about">{{.}}</p>
+    <p class="about">{{unescape .}}</p>
     {{end}}
 
     {{range .Schema.Bio.CustomData}}
