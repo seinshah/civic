@@ -85,3 +85,4 @@ using simple CSS directives.
 - [ ] Enable Hooks
 - [ ] Support [pkl-lang](https://pkl-lang.org/)
 - [ ] Add more templates
+- [ ] Add MCP Server for cv creation
